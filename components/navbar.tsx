@@ -19,7 +19,7 @@ export function openChat() {
 }
 
 export default function Navbar() {
-  const [user, setUser] = useState<{ email: string | null } | null>(null)
+  const [user, setUser] = useState<{ email?: string } | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
