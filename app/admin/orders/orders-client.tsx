@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { updateOrderStatus } from '../actions'
-import { usd, ORDER_STATUS_CN } from '@/lib/format'
+import { usd, ORDER_STATUS_ZH } from '@/lib/format'
 import type { Order } from '@/lib/types'
 
 const STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled']
@@ -41,7 +41,7 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
                 </div>
               </div>
               <span className={`status-pill ${order.status}`}>
-                {ORDER_STATUS_CN[order.status] ?? order.status}
+                {ORDER_STATUS_ZH[order.status] ?? order.status}
               </span>
             </div>
             <div className="muted">
@@ -70,7 +70,7 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
               >
                 {STATUSES.map((s) => (
                   <option key={s} value={s}>
-                    {ORDER_STATUS_CN[s]}
+                    {ORDER_STATUS_ZH[s]}
                   </option>
                 ))}
               </select>
