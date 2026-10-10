@@ -5,6 +5,7 @@ import { usd } from '@/lib/format'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
 import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
 import AddToCartButton from '@/components/add-to-cart-button'
+import ProductGallery from '@/components/product-gallery'
 import type { Product } from '@/lib/types'
 
 export default async function ProductPage({
@@ -26,17 +27,24 @@ export default async function ProductPage({
   if (!data) notFound()
   const product = data as Product
 
+  // 多张图片（优先用 image_urls）
+  const images: string[] =
+    product.image_urls && product.image_urls.length > 0
+      ? product.image_urls
+      : product.image_url
+        ? [product.image_url]
+        : []
+
   return (
     <div className="two-col">
       <div>
-        {product.image_url ? (
-          <img className="detail-img" src={product.image_url} alt={product.name} />
-        ) : (
-          <div className="detail-img detail-img-empty">{tr(dict, 'noImage')}</div>
-        )}
+        <ProductGallery images={images} name={product.name} />
       </div>
       <div>
         <h1>{product.name}</h1>
+        {product.category ? (
+          <p className="muted">{product.category}</p>
+        ) : null}
         <div className="price" style={{ fontSize: 28 }}>
           {usd(product.price)}
         </div>

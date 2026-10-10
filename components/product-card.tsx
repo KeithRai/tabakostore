@@ -12,15 +12,24 @@ export default function ProductCard({ product }: { product: Product }) {
   const price = parseFloat(product.price)
   const out = product.stock <= 0
 
+  // 封面图：多图时取第一张
+  const cover =
+    product.image_urls && product.image_urls.length > 0
+      ? product.image_urls[0]
+      : product.image_url
+
   return (
     <div className="card">
-      {product.image_url ? (
-        <img className="card-img" src={product.image_url} alt={product.name} />
+      {cover ? (
+        <img className="card-img" src={cover} alt={product.name} />
       ) : (
         <div className="card-img card-img-empty">{t('noImage')}</div>
       )}
       <div className="card-body">
         <h3 className="card-title">{product.name}</h3>
+        {product.category ? (
+          <p className="card-category">{product.category}</p>
+        ) : null}
         {product.description ? (
           <p className="card-desc">{product.description}</p>
         ) : null}
@@ -42,7 +51,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 id: product.id,
                 name: product.name,
                 price,
-                image_url: product.image_url,
+                image_url: cover,
               })
             }
           >

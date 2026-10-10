@@ -31,7 +31,15 @@ export default async function RootLayout({
 
   return (
     <html
-      lang={lang === 'zh' ? 'zh-CN' : lang === 'ja' ? 'ja' : 'en'}
+      lang={
+        lang === 'zh'
+          ? 'zh-CN'
+          : lang === 'zh-TW'
+            ? 'zh-TW'
+            : lang === 'ja'
+              ? 'ja'
+              : 'en'
+      }
     >
       <body>
         <LangProvider lang={lang}>

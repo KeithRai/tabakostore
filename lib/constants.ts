@@ -5,3 +5,6 @@ export const MAX_PER_ITEM = 20
 
 // 单个订单所有商品合计最多数量
 export const MAX_ORDER = 20
+
+// 主页每页显示的商品数量
+export const PAGE_SIZE = 20

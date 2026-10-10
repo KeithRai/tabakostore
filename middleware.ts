@@ -52,8 +52,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 下单和我的订单：需要登录
-  if ((path === '/checkout' || path.startsWith('/orders')) && !user) {
+  // 下单、我的订单、个人资料：需要登录
+  if (
+    (path === '/checkout' || path === '/profile' || path.startsWith('/orders')) &&
+    !user
+  ) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('next', path)
     return NextResponse.redirect(loginUrl)

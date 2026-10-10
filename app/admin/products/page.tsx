@@ -1,3 +1,4 @@
+import AdminNav from '@/components/admin-nav'
 import { requireAdmin } from '@/lib/admin-auth'
 import { createServiceClient } from '@/lib/supabase-service'
 import ProductsClient from './products-client'
@@ -10,5 +11,10 @@ export default async function AdminProductsPage() {
     .from('products')
     .select('*')
     .order('created_at', { ascending: false })
-  return <ProductsClient products={(data ?? []) as Product[]} />
+  return (
+    <div>
+      <AdminNav active="products" />
+      <ProductsClient products={(data ?? []) as Product[]} />
+    </div>
+  )
 }

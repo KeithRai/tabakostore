@@ -6,7 +6,7 @@ export function usd(n: string | number): string {
   }).format(isNaN(v) ? 0 : v)
 }
 
-export type LangKey = 'en' | 'zh' | 'ja'
+export type LangKey = 'en' | 'zh' | 'zh-TW' | 'ja'
 
 export const ORDER_STATUS: Record<string, string> = {
   pending: 'Pending payment',
@@ -24,6 +24,14 @@ export const ORDER_STATUS_ZH: Record<string, string> = {
   cancelled: '已取消',
 }
 
+export const ORDER_STATUS_ZH_TW: Record<string, string> = {
+  pending: '待支付',
+  paid: '已支付',
+  shipped: '已出貨',
+  delivered: '已完成',
+  cancelled: '已取消',
+}
+
 export const ORDER_STATUS_JA: Record<string, string> = {
   pending: '入金待ち',
   paid: '入金済み',
@@ -32,11 +40,9 @@ export const ORDER_STATUS_JA: Record<string, string> = {
   cancelled: 'キャンセル',
 }
 
-export function orderStatusLabel(
-  status: string,
-  lang: LangKey
-): string {
+export function orderStatusLabel(status: string, lang: LangKey): string {
   if (lang === 'zh') return ORDER_STATUS_ZH[status] ?? status
+  if (lang === 'zh-TW') return ORDER_STATUS_ZH_TW[status] ?? status
   if (lang === 'ja') return ORDER_STATUS_JA[status] ?? status
   return ORDER_STATUS[status] ?? status
 }

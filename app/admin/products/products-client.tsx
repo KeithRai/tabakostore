@@ -4,22 +4,26 @@ import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { upsertProduct, deleteProduct } from '../actions'
 import { usd } from '@/lib/format'
+import { useLang } from '@/components/lang-provider'
 import type { Product } from '@/lib/types'
 
-// 商品管理：表单新增/编辑 + 列表删除
+// 商品管理：新增/编辑（含种类、多张图片）+ 删除
 export default function ProductsClient({
   products,
 }: {
   products: Product[]
 }) {
   const router = useRouter()
+  const { t } = useLang()
   const [editingId, setEditingId] = useState('')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState('')
   const [stock, setStock] = useState('')
+  const [category, setCategory] = useState('')
   const [imageUrl, setImageUrl] = useState('')
-  const [file, setFile] = useState<File | null>(null)
+  const [existingImages, setExistingImages] = useState<string[]>([])
+  const [files, setFiles] = useState<File[]>([])
   const [msg, setMsg] = useState('')
 
   function startEdit(p: Product) {
@@ -28,8 +32,10 @@ export default function ProductsClient({
     setDescription(p.description ?? '')
     setPrice(p.price)
     setStock(String(p.stock))
+    setCategory(p.category ?? '')
     setImageUrl(p.image_url ?? '')
-    setFile(null)
+    setExistingImages(p.image_urls ?? [])
+    setFiles([])
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -39,8 +45,10 @@ export default function ProductsClient({
     setDescription('')
     setPrice('')
     setStock('')
+    setCategory('')
     setImageUrl('')
-    setFile(null)
+    setExistingImages([])
+    setFiles([])
   }
 
   async function onSubmit(e: FormEvent) {
@@ -51,8 +59,10 @@ export default function ProductsClient({
     fd.set('description', description)
     fd.set('price', price)
     fd.set('stock', stock)
+    fd.set('category', category)
     fd.set('image_url', imageUrl)
-    if (file) fd.set('image', file)
+    fd.set('existing_images', JSON.stringify(existingImages))
+    files.forEach((f) => fd.set('images', f))
     const res = await upsertProduct(fd)
     if (res?.error) {
       setMsg('❌ ' + res.error)
@@ -137,32 +147,39 @@ export default function ProductsClient({
           />
         </div>
         <div className="field">
-          <label className="label">商品图片</label>
+          <label className="label">{t('category')}</label>
+          <input
+            className="input"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            placeholder="例如：积木 / 玩偶 / 遥控车"
+          />
+        </div>
+        <div className="field">
+          <label className="label">{t('images')}</label>
           <input
             className="file-input"
             type="file"
             accept="image/*"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            multiple
+            onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
           />
-          {file ? (
-            <p className="muted">已选择：{file.name}（保存后上传）</p>
-          ) : imageUrl ? (
+          <p className="muted">{t('uploadMultiple')}</p>
+          {files.length > 0 ? (
+            <p className="muted">已选择 {files.length} 张新图片</p>
+          ) : null}
+          {existingImages.length > 0 && files.length === 0 ? (
             <div>
-              <img
-                src={imageUrl}
-                alt=""
-                style={{
-                  width: 120,
-                  borderRadius: 8,
-                  marginTop: 8,
-                  display: 'block',
-                }}
-              />
+              <div className="gallery-thumbs">
+                {existingImages.map((img) => (
+                  <div className="gallery-thumb" key={img}>
+                    <img src={img} alt="" />
+                  </div>
+                ))}
+              </div>
               <p className="muted">当前图片（不选新图片则保留）</p>
             </div>
-          ) : (
-            <p className="muted">不上传也可以，保存后再补</p>
-          )}
+          ) : null}
         </div>
         {msg ? <p className="muted">{msg}</p> : null}
         <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
@@ -170,11 +187,7 @@ export default function ProductsClient({
             保存
           </button>
           {editingId ? (
-            <button
-              className="btn btn-outline"
-              type="button"
-              onClick={resetForm}
-            >
+            <button className="btn btn-outline" type="button" onClick={resetForm}>
               取消编辑
             </button>
           ) : null}
@@ -187,40 +200,47 @@ export default function ProductsClient({
           <p>还没有商品，用上面的表单上架第一个商品吧。</p>
         </div>
       ) : (
-        products.map((p) => (
-          <div className="admin-product-row" key={p.id}>
-            {p.image_url ? (
-              <img src={p.image_url} alt="" />
-            ) : (
-              <div
-                style={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 8,
-                  background: '#eef2f7',
-                }}
-              />
-            )}
-            <div className="admin-product-info">
-              <div style={{ fontWeight: 600 }}>{p.name}</div>
-              <div className="muted">
-                {usd(p.price)} · 库存 {p.stock}
+        products.map((p) => {
+          const cover =
+            p.image_urls && p.image_urls.length > 0
+              ? p.image_urls[0]
+              : p.image_url
+          return (
+            <div className="admin-product-row" key={p.id}>
+              {cover ? (
+                <img src={cover} alt="" />
+              ) : (
+                <div
+                  style={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: 8,
+                    background: '#eef2f7',
+                  }}
+                />
+              )}
+              <div className="admin-product-info">
+                <div style={{ fontWeight: 600 }}>{p.name}</div>
+                <div className="muted">
+                  {usd(p.price)} · 库存 {p.stock}
+                  {p.category ? ` · ${p.category}` : ''}
+                </div>
               </div>
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => startEdit(p)}
+              >
+                编辑
+              </button>
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => onDelete(p.id)}
+              >
+                删除
+              </button>
             </div>
-            <button
-              className="btn btn-outline btn-sm"
-              onClick={() => startEdit(p)}
-            >
-              编辑
-            </button>
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={() => onDelete(p.id)}
-            >
-              删除
-            </button>
-          </div>
-        ))
+          )
+        })
       )}
     </div>
   )

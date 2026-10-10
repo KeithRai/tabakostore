@@ -4,7 +4,9 @@ export type Product = {
   description: string | null
   price: string // Supabase 的 numeric 类型会返回字符串
   stock: number
+  category: string | null
   image_url: string | null
+  image_urls: string[] | null
   created_at: string
   updated_at: string
 }
@@ -47,4 +49,11 @@ export type CheckoutInfo = {
   country: string
   address: string
   phone: string
+}
+
+export type News = {
+  id: string
+  title: string
+  content: string | null
+  created_at: string
 }

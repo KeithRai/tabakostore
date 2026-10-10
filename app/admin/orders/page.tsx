@@ -1,3 +1,4 @@
+import AdminNav from '@/components/admin-nav'
 import { requireAdmin } from '@/lib/admin-auth'
 import { createServiceClient } from '@/lib/supabase-service'
 import OrdersClient from './orders-client'
@@ -10,5 +11,10 @@ export default async function AdminOrdersPage() {
     .from('orders')
     .select('*, order_items(*)')
     .order('created_at', { ascending: false })
-  return <OrdersClient orders={(data ?? []) as Order[]} />
+  return (
+    <div>
+      <AdminNav active="orders" />
+      <OrdersClient orders={(data ?? []) as Order[]} />
+    </div>
+  )
 }
