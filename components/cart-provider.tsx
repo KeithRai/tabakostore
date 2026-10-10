@@ -7,6 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { useLang } from './lang-provider'
+import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
 import type { CartItem } from '@/lib/types'
 
 type CartContextType = {
@@ -23,6 +25,7 @@ const CartContext = createContext<CartContextType | null>(null)
 const STORAGE_KEY = 'tabako-cart'
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { t } = useLang()
   const [items, setItems] = useState<CartItem[]>([])
 
   // 启动时从 localStorage 读取购物车
@@ -39,26 +42,42 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }, [items])
 
+  // 加入购物车：单件上限 20，整单合计上限 20
   const add = (item: Omit<CartItem, 'qty'>, qty = 1) => {
+    const currentTotal = items.reduce((s, i) => s + i.qty, 0)
+    const found = items.find((i) => i.id === item.id)
+    const currentQty = found ? found.qty : 0
+    // 该商品最多还能加几件（受单件上限和整单上限约束）
+    const maxForThisItem = Math.min(
+      MAX_PER_ITEM,
+      MAX_ORDER - (currentTotal - currentQty)
+    )
+    if (maxForThisItem <= 0) {
+      alert(t('maxOrderReached', { n: MAX_ORDER }))
+      return
+    }
+    const newQty = Math.min(currentQty + qty, maxForThisItem)
     setItems((prev) => {
-      const found = prev.find((i) => i.id === item.id)
-      if (found) {
-        return prev.map((i) =>
-          i.id === item.id ? { ...i, qty: Math.min(i.qty + qty, 99) } : i
-        )
+      const exists = prev.find((i) => i.id === item.id)
+      if (exists) {
+        return prev.map((i) => (i.id === item.id ? { ...i, qty: newQty } : i))
       }
-      return [...prev, { ...item, qty }]
+      return [...prev, { ...item, qty: newQty }]
     })
   }
 
   const remove = (id: string) => setItems((prev) => prev.filter((i) => i.id !== id))
 
-  const setQty = (id: string, qty: number) =>
+  // 修改数量：同样受单件 20 和整单 20 约束
+  const setQty = (id: string, qty: number) => {
+    const currentTotal = items.reduce((s, i) => s + i.qty, 0)
+    const found = items.find((i) => i.id === id)
+    const otherTotal = currentTotal - (found ? found.qty : 0)
+    const capped = Math.max(1, Math.min(qty, MAX_PER_ITEM, MAX_ORDER - otherTotal))
     setItems((prev) =>
-      prev.map((i) =>
-        i.id === id ? { ...i, qty: Math.max(1, Math.min(99, qty)) } : i
-      )
+      prev.map((i) => (i.id === id ? { ...i, qty: capped } : i))
     )
+  }
 
   const clear = () => setItems([])
   const count = items.reduce((s, i) => s + i.qty, 0)

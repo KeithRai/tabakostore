@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase-service'
 import { usd } from '@/lib/format'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
+import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
 import AddToCartButton from '@/components/add-to-cart-button'
 import type { Product } from '@/lib/types'
 
@@ -44,10 +45,17 @@ export default async function ProductPage({
             ? tr(dict, 'inStock', { n: product.stock })
             : tr(dict, 'outOfStock')}
         </p>
+        {/* 数量选择 + 加入购物车 */}
+        <AddToCartButton product={product} />
+        {/* 购买上限提醒 */}
+        <p className="muted" style={{ marginTop: 8 }}>
+          {tr(dict, 'maxPerItem', { n: MAX_PER_ITEM })} ·{' '}
+          {tr(dict, 'maxOrder', { n: MAX_ORDER })}
+        </p>
+        {/* 商品描述（放在数量和加入购物车按钮下方） */}
         {product.description ? (
           <p style={{ marginTop: 12 }}>{product.description}</p>
         ) : null}
-        <AddToCartButton product={product} />
       </div>
     </div>
   )

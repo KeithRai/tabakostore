@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useCart } from '@/components/cart-provider'
 import { useLang } from '@/components/lang-provider'
 import { usd } from '@/lib/format'
+import { MAX_ORDER } from '@/lib/constants'
 
 export default function CartPage() {
   const { items, setQty, remove, total } = useCart()
@@ -80,7 +81,7 @@ export default function CartPage() {
         </Link>
       </div>
       <p className="muted" style={{ marginTop: 12 }}>
-        {t('paymentNote')}
+        {t('maxOrder', { n: MAX_ORDER })} · {t('paymentNote')}
       </p>
     </div>
   )

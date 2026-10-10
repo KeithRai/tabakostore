@@ -17,6 +17,16 @@ const en = {
   logIn: 'Log in',
   signUp: 'Sign up',
   logOut: 'Log out',
+  // 菜单
+  home: 'Home',
+  menu: 'Menu',
+  products: 'Products',
+  categories: 'Categories',
+  search: 'Search',
+  news: 'News',
+  help: 'Help',
+  language: 'Language',
+  backToTop: 'Back to top',
   // 首页
   welcomeTitle: 'Welcome to TabakoStore 🧸',
   welcomeSub:
@@ -28,6 +38,10 @@ const en = {
   inStock: '{n} in stock',
   outOfStock: 'Out of stock',
   noImage: 'No image',
+  // 购买限制
+  maxPerItem: 'Max {n} per item',
+  maxOrder: 'Max {n} items per order',
+  maxOrderReached: 'Maximum {n} items per order reached.',
   // 购物车
   yourCart: 'Your Cart',
   cartEmpty: 'Your cart is empty.',
@@ -77,8 +91,7 @@ const en = {
   howToPay: 'How to pay',
   howToPay1: 'Click the button below to open our customer service chat.',
   howToPay2: 'Send the agent your order number.',
-  howToPay3:
-    'Pay by WeChat Pay or Alipay as the agent instructs.',
+  howToPay3: 'Pay by WeChat Pay or Alipay as the agent instructs.',
   howToPay4: 'We will confirm your payment and ship the order.',
   cardComingSoon: 'Credit / debit card payment via PayPal is coming soon.',
   openChat: 'Open Customer Service Chat',
@@ -89,6 +102,28 @@ const en = {
   shipTo: 'Ship to',
   pendingNote:
     'Please contact customer service to complete payment (WeChat Pay / Alipay).',
+  // 年龄验证
+  ageQuestion: 'Are you 18 years old or older?',
+  ageYes: 'I am 18 or older',
+  ageNo: 'I am under 18',
+  ageDeny: 'Sorry, you must be 18 or older to enter this site.',
+  // 搜索
+  searchPlaceholder: 'Search products…',
+  noResults: 'No products found.',
+  // 种类
+  categoriesTitle: 'Categories',
+  allProducts: 'All products',
+  // 新闻
+  newsTitle: 'News',
+  newsComingSoon: 'News is coming soon, stay tuned!',
+  // 帮助
+  helpTitle: 'Help',
+  helpPaymentQ: 'How do I pay?',
+  helpPaymentA:
+    'After placing your order, open the customer service chat, tell the agent your order number, and pay by WeChat Pay or Alipay.',
+  helpContactQ: 'How do I contact customer service?',
+  helpContactA:
+    'Click "Contact Us" in the top bar, or the chat icon in the bottom right corner.',
 }
 
 export type Dict = typeof en
@@ -101,6 +136,15 @@ const zh: Dict = {
   logIn: '登录',
   signUp: '注册',
   logOut: '退出',
+  home: '主页',
+  menu: '菜单',
+  products: '商品',
+  categories: '种类',
+  search: '搜索',
+  news: '新闻',
+  help: '帮助',
+  language: '语言',
+  backToTop: '返回顶部',
   welcomeTitle: '欢迎光临 TabakoStore 🧸',
   welcomeSub: '好玩玩具，运送全球。支持微信支付 / 支付宝（通过客服付款）。',
   noProducts: '暂无商品。',
@@ -109,6 +153,9 @@ const zh: Dict = {
   inStock: '库存 {n} 件',
   outOfStock: '已售罄',
   noImage: '暂无图片',
+  maxPerItem: '单件最多 {n} 件',
+  maxOrder: '单次最多购买 {n} 件',
+  maxOrderReached: '单次最多购买 {n} 件。',
   yourCart: '购物车',
   cartEmpty: '购物车是空的。',
   browseProducts: '浏览商品',
@@ -162,6 +209,21 @@ const zh: Dict = {
   startShopping: '开始购物',
   shipTo: '收货人',
   pendingNote: '请联系客服完成支付（微信支付 / 支付宝）。',
+  ageQuestion: '您是否已满18岁？',
+  ageYes: '我已满18岁',
+  ageNo: '我未满18岁',
+  ageDeny: '抱歉，未满18岁无法进入本网站。',
+  searchPlaceholder: '搜索商品…',
+  noResults: '没有找到商品。',
+  categoriesTitle: '种类',
+  allProducts: '全部商品',
+  newsTitle: '新闻',
+  newsComingSoon: '新闻即将上线，敬请期待！',
+  helpTitle: '帮助',
+  helpPaymentQ: '如何付款？',
+  helpPaymentA: '下单后打开客服聊天，告知客服订单号，通过微信支付或支付宝付款。',
+  helpContactQ: '如何联系客服？',
+  helpContactA: '点击顶部导航栏的"联系客服"，或右下角的聊天图标。',
 }
 
 const ja: Dict = {
@@ -172,6 +234,15 @@ const ja: Dict = {
   logIn: 'ログイン',
   signUp: '新規登録',
   logOut: 'ログアウト',
+  home: 'ホーム',
+  menu: 'メニュー',
+  products: '商品',
+  categories: 'カテゴリー',
+  search: '検索',
+  news: 'ニュース',
+  help: 'ヘルプ',
+  language: '言語',
+  backToTop: '先頭へ戻る',
   welcomeTitle: 'TabakoStoreへようこそ 🧸',
   welcomeSub:
     'おもちゃを世界中へお届け。WeChat支付・支付宝（カスタマーサポート経由）でお支払いいただけます。',
@@ -181,6 +252,9 @@ const ja: Dict = {
   inStock: '在庫 {n} 個',
   outOfStock: '在庫なし',
   noImage: '画像なし',
+  maxPerItem: '1商品につき{n}個まで',
+  maxOrder: '1回の注文で{n}個まで',
+  maxOrderReached: '1回の注文で{n}個までです。',
   yourCart: 'カート',
   cartEmpty: 'カートは空です。',
   browseProducts: '商品を見る',
@@ -236,6 +310,24 @@ const ja: Dict = {
   shipTo: '配送先',
   pendingNote:
     'カスタマーサポートに連絡して支払いを完了してください（WeChat支付・支付宝）。',
+  ageQuestion: '18歳以上ですか？',
+  ageYes: '18歳以上です',
+  ageNo: '18歳未満です',
+  ageDeny:
+    '申し訳ありませんが、このサイトは18歳以上の方のみご利用いただけます。',
+  searchPlaceholder: '商品を検索…',
+  noResults: '商品が見つかりません。',
+  categoriesTitle: 'カテゴリー',
+  allProducts: '全ての商品',
+  newsTitle: 'ニュース',
+  newsComingSoon: 'ニュースは近日公開予定です。お楽しみに！',
+  helpTitle: 'ヘルプ',
+  helpPaymentQ: 'お支払い方法は？',
+  helpPaymentA:
+    '注文後、カスタマーサポートチャットを開き、注文番号を伝えてWeChat支付または支付宝でお支払いください。',
+  helpContactQ: 'カスタマーサポートに連絡するには？',
+  helpContactA:
+    '上部の「お問い合わせ」または右下のチャットアイコンをクリックしてください。',
 }
 
 export function getDictionary(lang: Lang): Dict {

@@ -1,8 +1,10 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase-server'
 import { createServiceClient } from '@/lib/supabase-service'
+import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
 import type { CartItem, CheckoutInfo } from '@/lib/types'
 
 type Result = { error?: string; order_no?: string; total?: number }
@@ -21,6 +23,12 @@ export async function createOrder(
 
   if (items.length === 0) {
     return { error: 'Your cart is empty.' }
+  }
+
+  // 整单合计上限
+  const totalQty = items.reduce((s, i) => s + i.qty, 0)
+  if (totalQty > MAX_ORDER) {
+    return { error: `Maximum ${MAX_ORDER} items per order.` }
   }
 
   const db = createServiceClient()
@@ -50,6 +58,11 @@ export async function createOrder(
       return { error: `Product no longer exists: ${item.name}` }
     }
     const price = parseFloat(p.price)
+    if (item.qty > MAX_PER_ITEM) {
+      return {
+        error: `Maximum ${MAX_PER_ITEM} of "${p.name}" per order.`,
+      }
+    }
     if (p.stock < item.qty) {
       return {
         error: `"${p.name}" only has ${p.stock} left in stock. Please adjust your cart.`,

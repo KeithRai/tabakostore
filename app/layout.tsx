@@ -5,6 +5,8 @@ import './globals.css'
 import { CartProvider } from '@/components/cart-provider'
 import { LangProvider } from '@/components/lang-provider'
 import Navbar from '@/components/navbar'
+import AgeGate from '@/components/age-gate'
+import BackToTop from '@/components/back-to-top'
 import { LANG_LIST, type Lang } from '@/lib/i18n'
 
 export const metadata: Metadata = {
@@ -32,15 +34,17 @@ export default async function RootLayout({
       lang={lang === 'zh' ? 'zh-CN' : lang === 'ja' ? 'ja' : 'en'}
     >
       <body>
-        <CartProvider>
-          <LangProvider lang={lang}>
+        <LangProvider lang={lang}>
+          <CartProvider>
             <Navbar />
             <main className="container">{children}</main>
             <footer className="footer">
               © {new Date().getFullYear()} TabakoStore
             </footer>
-          </LangProvider>
-        </CartProvider>
+            <AgeGate />
+            <BackToTop />
+          </CartProvider>
+        </LangProvider>
         {tidio ? <TidioWidget code={tidio} /> : null}
       </body>
     </html>

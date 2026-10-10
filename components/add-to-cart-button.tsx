@@ -2,16 +2,17 @@
 
 import { useState } from 'react'
 import { useCart } from './cart-provider'
-import { useLang } from './lang-provider'
+import { MAX_PER_ITEM } from '@/lib/constants'
 import type { Product } from '@/lib/types'
 
 export default function AddToCartButton({ product }: { product: Product }) {
   const { add } = useCart()
-  const { t } = useLang()
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
   const price = parseFloat(product.price)
   const out = product.stock <= 0
+  // 数量上限 = min(库存, 20)
+  const maxQty = Math.min(Math.max(product.stock, 1), MAX_PER_ITEM)
 
   return (
     <div className="buy-box">
@@ -21,16 +22,9 @@ export default function AddToCartButton({ product }: { product: Product }) {
         </button>
         <input
           value={qty}
-          onChange={(e) =>
-            setQty(
-              Math.max(1, Math.min(Math.max(product.stock, 1), parseInt(e.target.value) || 1))
-            )
-          }
+          onChange={(e) => setQty(Math.max(1, Math.min(maxQty, parseInt(e.target.value) || 1)))}
         />
-        <button
-          type="button"
-          onClick={() => setQty((q) => Math.min(Math.max(product.stock, 1), q + 1))}
-        >
+        <button type="button" onClick={() => setQty((q) => Math.min(maxQty, q + 1))}>
           ＋
         </button>
       </div>
@@ -46,7 +40,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
           setTimeout(() => setAdded(false), 1500)
         }}
       >
-        {out ? t('outOfStock') : added ? 'Added ✓' : t('addToCart')}
+        {out ? 'Out of stock' : added ? 'Added ✓' : 'Add to cart'}
       </button>
     </div>
   )
