@@ -1,22 +1,32 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { upsertNews, deleteNews } from '../actions'
+import { useLang } from '@/components/lang-provider'
 import type { News } from '@/lib/types'
 
-// 新闻管理：添加/编辑/删除新闻
+// 新闻管理：添加/编辑/删除新闻（可带图片）
 export default function NewsClient({ news }: { news: News[] }) {
   const router = useRouter()
+  const { t } = useLang()
+  const fileRef = useRef<HTMLInputElement>(null)
   const [editingId, setEditingId] = useState('')
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [file, setFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string | null>(null)
   const [msg, setMsg] = useState('')
 
   function startEdit(n: News) {
     setEditingId(n.id)
     setTitle(n.title)
     setContent(n.content ?? '')
+    setImageUrl(n.image_url ?? '')
+    setFile(null)
+    if (preview) URL.revokeObjectURL(preview)
+    setPreview(null)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -24,6 +34,17 @@ export default function NewsClient({ news }: { news: News[] }) {
     setEditingId('')
     setTitle('')
     setContent('')
+    setImageUrl('')
+    setFile(null)
+    if (preview) URL.revokeObjectURL(preview)
+    setPreview(null)
+  }
+
+  function onPickImage(files: FileList | null) {
+    const f = files?.[0] ?? null
+    setFile(f)
+    if (preview) URL.revokeObjectURL(preview)
+    setPreview(f ? URL.createObjectURL(f) : null)
   }
 
   async function onSubmit(e: FormEvent) {
@@ -32,6 +53,8 @@ export default function NewsClient({ news }: { news: News[] }) {
     fd.set('id', editingId)
     fd.set('title', title)
     fd.set('content', content)
+    fd.set('image_url', imageUrl)
+    if (file) fd.set('image', file)
     const res = await upsertNews(fd)
     if (res?.error) {
       setMsg('❌ ' + res.error)
@@ -81,6 +104,37 @@ export default function NewsClient({ news }: { news: News[] }) {
             onChange={(e) => setTitle(e.target.value)}
             required
           />
+        </div>
+        <div className="field">
+          <label className="label">{t('newsImage')}</label>
+          <div className="avatar-upload">
+            {preview ? (
+              <img className="avatar-preview" src={preview} alt="" />
+            ) : imageUrl ? (
+              <img className="avatar-preview" src={imageUrl} alt="" />
+            ) : (
+              <div className="avatar-preview avatar-preview-empty">
+                🖼️
+              </div>
+            )}
+            <div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="file-input-hidden"
+                onChange={(e) => onPickImage(e.target.files)}
+              />
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => fileRef.current?.click()}
+              >
+                {t('chooseImage')}
+              </button>
+              {file ? <p className="muted">{file.name}</p> : null}
+            </div>
+          </div>
         </div>
         <div className="field">
           <label className="label">内容</label>

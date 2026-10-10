@@ -8,6 +8,7 @@ import { useLang } from '@/components/lang-provider'
 import type { Product } from '@/lib/types'
 
 // 商品管理：新增/编辑（含种类、多张图片）+ 删除
+// 现有商品列表由"现有商品"按钮控制显隐
 export default function ProductsClient({
   products,
 }: {
@@ -15,6 +16,7 @@ export default function ProductsClient({
 }) {
   const router = useRouter()
   const { t } = useLang()
+  const [showList, setShowList] = useState(true)
   const [editingId, setEditingId] = useState('')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -88,16 +90,25 @@ export default function ProductsClient({
     <div>
       <div className="admin-bar">
         <h1>商品管理</h1>
-        <button
-          type="button"
-          className="btn btn-outline btn-sm"
-          onClick={() => {
-            resetForm()
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          }}
-        >
-          ＋ 新增商品
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() => {
+              resetForm()
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
+          >
+            ＋ 新增商品
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() => setShowList((v) => !v)}
+          >
+            {t('existingProducts')}（{products.length}）
+          </button>
+        </div>
       </div>
 
       <form className="admin-panel" onSubmit={onSubmit}>
@@ -194,53 +205,60 @@ export default function ProductsClient({
         </div>
       </form>
 
-      <h2>现有商品（{products.length}）</h2>
-      {products.length === 0 ? (
-        <div className="empty">
-          <p>还没有商品，用上面的表单上架第一个商品吧。</p>
-        </div>
-      ) : (
-        products.map((p) => {
-          const cover =
-            p.image_urls && p.image_urls.length > 0
-              ? p.image_urls[0]
-              : p.image_url
-          return (
-            <div className="admin-product-row" key={p.id}>
-              {cover ? (
-                <img src={cover} alt="" />
-              ) : (
-                <div
-                  style={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: 8,
-                    background: '#eef2f7',
-                  }}
-                />
-              )}
-              <div className="admin-product-info">
-                <div style={{ fontWeight: 600 }}>{p.name}</div>
-                <div className="muted">
-                  {usd(p.price)} · 库存 {p.stock}
-                  {p.category ? ` · ${p.category}` : ''}
-                </div>
-              </div>
-              <button
-                className="btn btn-outline btn-sm"
-                onClick={() => startEdit(p)}
-              >
-                编辑
-              </button>
-              <button
-                className="btn btn-danger btn-sm"
-                onClick={() => onDelete(p.id)}
-              >
-                删除
-              </button>
+      {/* 现有商品列表（由按钮控制显隐） */}
+      {showList && (
+        <>
+          <h2>
+            {t('existingProducts')}（{products.length}）
+          </h2>
+          {products.length === 0 ? (
+            <div className="empty">
+              <p>还没有商品，用上面的表单上架第一个商品吧。</p>
             </div>
-          )
-        })
+          ) : (
+            products.map((p) => {
+              const cover =
+                p.image_urls && p.image_urls.length > 0
+                  ? p.image_urls[0]
+                  : p.image_url
+              return (
+                <div className="admin-product-row" key={p.id}>
+                  {cover ? (
+                    <img src={cover} alt="" />
+                  ) : (
+                    <div
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 8,
+                        background: '#eef2f7',
+                      }}
+                    />
+                  )}
+                  <div className="admin-product-info">
+                    <div style={{ fontWeight: 600 }}>{p.name}</div>
+                    <div className="muted">
+                      {usd(p.price)} · 库存 {p.stock}
+                      {p.category ? ` · ${p.category}` : ''}
+                    </div>
+                  </div>
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={() => startEdit(p)}
+                  >
+                    编辑
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => onDelete(p.id)}
+                  >
+                    删除
+                  </button>
+                </div>
+              )
+            })
+          )}
+        </>
       )}
     </div>
   )

@@ -136,26 +136,45 @@ export async function updateOrderStatus(id: string, status: string) {
   return { success: true }
 }
 
-// 新闻：新增或编辑
+// 新闻：新增或编辑（可带图片）
 export async function upsertNews(formData: FormData) {
   await requireAdmin()
   const db = createServiceClient()
   const id = String(formData.get('id') ?? '').trim()
   const title = String(formData.get('title') ?? '').trim()
   const content = String(formData.get('content') ?? '').trim()
-
   if (!title) {
     return { error: '请填写新闻标题' }
+  }
+
+  // 新闻图片上传
+  let imageUrl = String(formData.get('image_url') ?? '').trim()
+  const maybeFile = formData.get('image')
+  if (maybeFile instanceof File && maybeFile.size > 0) {
+    const ext = (maybeFile.name.split('.').pop() || 'jpg').toLowerCase()
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+    const { error: uploadError } = await db.storage
+      .from('product-images')
+      .upload(path, maybeFile, {
+        contentType: maybeFile.type || 'image/jpeg',
+        upsert: true,
+      })
+    if (uploadError) {
+      return { error: '图片上传失败：' + uploadError.message }
+    }
+    imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/${path}`
   }
 
   if (id) {
     const { error } = await db
       .from('news')
-      .update({ title, content })
+      .update({ title, content, image_url: imageUrl || null })
       .eq('id', id)
     if (error) return { error: '保存失败：' + error.message }
   } else {
-    const { error } = await db.from('news').insert({ title, content })
+    const { error } = await db
+      .from('news')
+      .insert({ title, content, image_url: imageUrl || null })
     if (error) return { error: '保存失败：' + error.message }
   }
 
@@ -171,5 +190,21 @@ export async function deleteNews(id: string) {
   if (error) return { error: '删除失败：' + error.message }
   revalidatePath('/admin/news')
   revalidatePath('/news')
+  return { success: true }
+}
+
+// 商家说明：保存到 settings 表（帮助页展示）
+export async function updateInstructions(formData: FormData) {
+  await requireAdmin()
+  const db = createServiceClient()
+  const content = String(formData.get('content') ?? '')
+  const { error } = await db.from('settings').upsert({
+    id: 'instructions',
+    content,
+    updated_at: new Date().toISOString(),
+  })
+  if (error) return { error: '保存失败：' + error.message }
+  revalidatePath('/admin/instructions')
+  revalidatePath('/help')
   return { success: true }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase-browser'
@@ -16,12 +16,21 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [nickname, setNickname] = useState('')
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string | null>(null)
   const [gender, setGender] = useState<GenderOption>('')
   const [birthday, setBirthday] = useState('')
   const [agree, setAgree] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  function onPickAvatar(files: FileList | null) {
+    const f = files?.[0] ?? null
+    setAvatarFile(f)
+    if (preview) URL.revokeObjectURL(preview)
+    setPreview(f ? URL.createObjectURL(f) : null)
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault()
@@ -131,15 +140,32 @@ export default function SignupPage() {
       </div>
       <div className="field">
         <label className="label">{t('avatar')}</label>
-        <input
-          className="file-input"
-          type="file"
-          accept="image/*"
-          onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
-        />
-        {avatarFile ? (
-          <p className="muted">已选择：{avatarFile.name}</p>
-        ) : null}
+        <div className="avatar-upload">
+          {preview ? (
+            <img className="avatar-preview" src={preview} alt="" />
+          ) : (
+            <div className="avatar-preview avatar-preview-empty">👤</div>
+          )}
+          <div>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="file-input-hidden"
+              onChange={(e) => onPickAvatar(e.target.files)}
+            />
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => fileRef.current?.click()}
+            >
+              {t('chooseImage')}
+            </button>
+            {avatarFile ? (
+              <p className="muted">{avatarFile.name}</p>
+            ) : null}
+          </div>
+        </div>
       </div>
       <div className="field">
         <label className="label">{t('gender')}</label>

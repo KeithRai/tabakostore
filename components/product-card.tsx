@@ -3,12 +3,14 @@
 import Link from 'next/link'
 import { useCart } from './cart-provider'
 import { useLang } from './lang-provider'
+import { useCurrentUser } from './use-current-user'
 import { usd } from '@/lib/format'
 import type { Product } from '@/lib/types'
 
 export default function ProductCard({ product }: { product: Product }) {
   const { add } = useCart()
   const { t } = useLang()
+  const { isLoggedIn } = useCurrentUser()
   const price = parseFloat(product.price)
   const out = product.stock <= 0
 
@@ -46,14 +48,19 @@ export default function ProductCard({ product }: { product: Product }) {
           <button
             className="btn btn-primary btn-sm"
             disabled={out}
-            onClick={() =>
+            onClick={() => {
+              // 未登录：弹窗提醒登录
+              if (!isLoggedIn) {
+                alert(t('loginToAdd'))
+                return
+              }
               add({
                 id: product.id,
                 name: product.name,
                 price,
                 image_url: cover,
               })
-            }
+            }}
           >
             {t('addToCart')}
           </button>

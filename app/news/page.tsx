@@ -31,6 +31,9 @@ export default async function NewsPage() {
       ) : (
         news.map((n) => (
           <div className="news-item" key={n.id}>
+            {n.image_url ? (
+              <img className="news-img" src={n.image_url} alt={n.title} />
+            ) : null}
             <h3>{n.title}</h3>
             <div className="news-date">
               {new Date(n.created_at).toLocaleDateString()}

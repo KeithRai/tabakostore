@@ -2,11 +2,15 @@
 
 import { useState } from 'react'
 import { useCart } from './cart-provider'
+import { useLang } from './lang-provider'
+import { useCurrentUser } from './use-current-user'
 import { MAX_PER_ITEM } from '@/lib/constants'
 import type { Product } from '@/lib/types'
 
 export default function AddToCartButton({ product }: { product: Product }) {
   const { add } = useCart()
+  const { t } = useLang()
+  const { isLoggedIn } = useCurrentUser()
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
   const price = parseFloat(product.price)
@@ -32,6 +36,11 @@ export default function AddToCartButton({ product }: { product: Product }) {
         className="btn btn-primary"
         disabled={out}
         onClick={() => {
+          // 未登录：弹窗提醒登录
+          if (!isLoggedIn) {
+            alert(t('loginToAdd'))
+            return
+          }
           add(
             { id: product.id, name: product.name, price, image_url: product.image_url },
             qty

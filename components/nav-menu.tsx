@@ -86,19 +86,19 @@ export default function NavMenu({
 
           <div className="menu-list">
             <Link href="/" onClick={close}>
-              1. {t('products')}
+              {t('products')}
             </Link>
             <Link href="/categories" onClick={close}>
-              2. {t('categories')}
+              {t('categories')}
             </Link>
             <Link href="/search" onClick={close}>
-              3. {t('search')}
+              {t('search')}
             </Link>
             <Link href="/news" onClick={close}>
-              4. {t('news')}
+              {t('news')}
             </Link>
             <Link href="/help" onClick={close}>
-              5. {t('help')}
+              {t('help')}
             </Link>
           </div>
         </div>

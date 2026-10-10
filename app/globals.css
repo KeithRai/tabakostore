@@ -975,6 +975,52 @@ textarea.input {
 select.input {
   appearance: auto;
 }
+
+/* 头像/图片上传：左侧预览 + 右侧选择按钮 */
+.avatar-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.avatar-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.avatar-preview-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  background: #eef2f7;
+}
+.file-input-hidden {
+  display: none;
+}
+
+/* 手机号：区号 + 号码 */
+.phone-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.phone-code {
+  width: 150px;
+  flex-shrink: 0;
+}
+
+/* 新闻图片 */
+.news-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
 .file-input {
   margin-top: 8px;
   font-size: 14px;

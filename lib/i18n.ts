@@ -148,7 +148,7 @@ const en = {
   nicknameRequired: 'Nickname is required.',
   // 个人资料页
   myProfile: 'My Profile',
-  addressLabel: 'Address',
+  addressLabel: 'Shipping Address',
   phoneNumber: 'Phone number',
   emailReadOnly: 'Email cannot be changed.',
   save: 'Save',
@@ -163,6 +163,19 @@ const en = {
   // 分页
   prevPage: 'Previous',
   nextPage: 'Next',
+  // 登录提醒
+  loginToAdd: 'Please log in to add items to your cart.',
+  // 个人资料
+  chooseImage: 'Choose Image',
+  phoneCode: 'Country code',
+  // 后台说明
+  instructions: 'Instructions',
+  editInstructions: 'Edit Instructions',
+  paymentInstructions: 'Store Instructions',
+  // 新闻
+  newsImage: 'News Image',
+  // 商品管理
+  existingProducts: 'Products',
 }
 
 export type Dict = typeof en
@@ -285,7 +298,7 @@ const zh: Dict = {
   termsRequired: '注册前必须同意服务协议。',
   nicknameRequired: '请填写昵称。',
   myProfile: '我的资料',
-  addressLabel: '地址',
+  addressLabel: '收货地址',
   phoneNumber: '手机号码',
   emailReadOnly: '邮箱不可修改。',
   save: '保存',
@@ -297,6 +310,19 @@ const zh: Dict = {
   uploadMultiple: '可上传多张图片（第一张为封面）',
   prevPage: '上一页',
   nextPage: '下一页',
+  // 登录提醒
+  loginToAdd: '请先登录后再加入购物车。',
+  // 个人资料
+  chooseImage: '选择图片',
+  phoneCode: '区号',
+  // 后台说明
+  instructions: '说明',
+  editInstructions: '编辑说明',
+  paymentInstructions: '商家说明',
+  // 新闻
+  newsImage: '新闻图片',
+  // 商品管理
+  existingProducts: '现有商品',
 }
 
 const zhTW: Dict = {
@@ -420,7 +446,7 @@ const zhTW: Dict = {
   termsRequired: '註冊前必須同意服務協議。',
   nicknameRequired: '請填寫暱稱。',
   myProfile: '我的資料',
-  addressLabel: '地址',
+  addressLabel: '收貨地址',
   phoneNumber: '手機號碼',
   emailReadOnly: '電子郵件無法修改。',
   save: '儲存',
@@ -432,6 +458,19 @@ const zhTW: Dict = {
   uploadMultiple: '可上傳多張圖片（第一張為封面）',
   prevPage: '上一頁',
   nextPage: '下一頁',
+  // 登入提醒
+  loginToAdd: '請先登入後再加入購物車。',
+  // 個人資料
+  chooseImage: '選擇圖片',
+  phoneCode: '區號',
+  // 後台說明
+  instructions: '說明',
+  editInstructions: '編輯說明',
+  paymentInstructions: '商家說明',
+  // 新聞
+  newsImage: '新聞圖片',
+  // 商品管理
+  existingProducts: '現有商品',
 }
 
 const ja: Dict = {
@@ -558,7 +597,7 @@ const ja: Dict = {
   termsRequired: '登録には利用規約への同意が必要です。',
   nicknameRequired: 'ニックネームを入力してください。',
   myProfile: 'マイプロフィール',
-  addressLabel: '住所',
+  addressLabel: '配送先',
   phoneNumber: '電話番号',
   emailReadOnly: 'メールアドレスは変更できません。',
   save: '保存',
@@ -570,6 +609,19 @@ const ja: Dict = {
   uploadMultiple: '複数枚のアップロードが可能です（1枚目が表紙）',
   prevPage: '前のページ',
   nextPage: '次のページ',
+  // ログイン提醒
+  loginToAdd: 'カートに追加するにはログインしてください。',
+  // プロフィール
+  chooseImage: '画像を選択',
+  phoneCode: '国番号',
+  // 説明
+  instructions: '説明',
+  editInstructions: '説明を編集',
+  paymentInstructions: '店舗説明',
+  // ニュース
+  newsImage: 'ニュース画像',
+  // 商品管理
+  existingProducts: '商品一覧',
 }
 
 export function getDictionary(lang: Lang): Dict {
