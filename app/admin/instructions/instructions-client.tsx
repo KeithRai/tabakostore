@@ -30,7 +30,7 @@ export default function InstructionsClient({
 
   return (
     <div>
-      <h1>说明</h1>
+      <h1>帮助信息编辑</h1>
       <p className="muted">
         在这里填写展示在"帮助"页面的说明内容（例如：付款方式、发货时间、退换政策等）。
       </p>
@@ -45,14 +45,25 @@ export default function InstructionsClient({
           />
         </div>
         {msg ? <p className="muted">{msg}</p> : null}
-        <button
-          className="btn btn-primary"
-          type="submit"
-          disabled={busy}
-          style={{ marginTop: 12 }}
-        >
-          {busy ? '保存中…' : '保存'}
-        </button>
+        <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+          <button
+            className="btn btn-primary"
+            type="submit"
+            disabled={busy}
+          >
+            {busy ? '保存中…' : '保存'}
+          </button>
+          <button
+            className="btn btn-outline"
+            type="button"
+            onClick={() => {
+              setContent(initialContent)
+              setMsg('')
+            }}
+          >
+            取消
+          </button>
+        </div>
       </form>
     </div>
   )

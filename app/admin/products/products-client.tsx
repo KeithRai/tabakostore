@@ -197,11 +197,13 @@ export default function ProductsClient({
           <button className="btn btn-primary" type="submit">
             保存
           </button>
-          {editingId ? (
-            <button className="btn btn-outline" type="button" onClick={resetForm}>
-              取消编辑
-            </button>
-          ) : null}
+          <button
+            className="btn btn-outline"
+            type="button"
+            onClick={resetForm}
+          >
+            取消
+          </button>
         </div>
       </form>
 

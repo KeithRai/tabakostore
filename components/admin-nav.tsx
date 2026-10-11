@@ -30,7 +30,7 @@ export default function AdminNav({
         href="/admin/instructions"
         className={active === 'instructions' ? 'active' : ''}
       >
-        说明
+        帮助信息编辑
       </Link>
     </div>
   )

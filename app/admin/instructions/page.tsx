@@ -3,7 +3,7 @@ import { requireAdmin } from '@/lib/admin-auth'
 import { createServiceClient } from '@/lib/supabase-service'
 import InstructionsClient from './instructions-client'
 
-// 后台说明管理（需登录）
+// 后台帮助信息编辑（需登录）
 export default async function AdminInstructionsPage() {
   await requireAdmin()
   const db = createServiceClient()
