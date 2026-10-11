@@ -1183,6 +1183,14 @@ textarea.input {
   margin-top: 3px;
 }
 
+/* 后台订单按日期筛选 */
+.date-filter {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
 /* 费用明细 */
 .fee-list {
   display: flex;

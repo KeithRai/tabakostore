@@ -207,14 +207,15 @@ export async function deleteNews(id: string) {
   return { success: true }
 }
 
-// 商家说明：保存到 settings 表（帮助页展示）
+// 商家说明：保存到 settings 表（帮助页展示，含标题和正文）
 export async function updateInstructions(formData: FormData) {
   await requireAdmin()
   const db = createServiceClient()
+  const title = String(formData.get('title') ?? '').trim()
   const content = String(formData.get('content') ?? '')
   const { error } = await db.from('settings').upsert({
     id: 'instructions',
-    content,
+    content: JSON.stringify({ title, body: content }),
     updated_at: new Date().toISOString(),
   })
   if (error) return { error: '保存失败：' + error.message }

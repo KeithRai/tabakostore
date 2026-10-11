@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase-service'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
+import { parseInstructions } from '@/lib/instructions'
 import ContactButton from '@/components/contact-button'
 
 // 帮助页：常见问题 + 商家说明
@@ -12,22 +13,26 @@ export default async function HelpPage() {
     : 'en'
   const dict = getDictionary(lang)
 
-  // 商家说明（后台可编辑）
+  // 商家说明（后台可编辑，含标题）
   const db = createServiceClient()
   const { data: settingsData } = await db
     .from('settings')
     .select('content')
     .eq('id', 'instructions')
     .single()
-  const instructions = settingsData?.content ?? ''
+  const instructions = parseInstructions(settingsData?.content)
 
   return (
     <div>
       <h1>{tr(dict, 'helpTitle')}</h1>
-      {instructions ? (
+      {instructions.body ? (
         <div className="admin-panel">
-          <h3 style={{ marginTop: 0 }}>{tr(dict, 'paymentInstructions')}</h3>
-          <p style={{ whiteSpace: 'pre-wrap' }}>{instructions}</p>
+          <h3 style={{ marginTop: 0 }}>
+            {instructions.title || tr(dict, 'paymentInstructions')}
+          </h3>
+          <p style={{ whiteSpace: 'pre-wrap' }}>
+            {instructions.body}
+          </p>
         </div>
       ) : null}
       <div className="admin-panel">

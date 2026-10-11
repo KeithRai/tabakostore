@@ -189,6 +189,10 @@ const en = {
   cancelOrder: 'Cancel order',
   orderCancelled: 'Order cancelled',
   cancelConfirm: 'Cancel this order?',
+  // 资料页 / 搜索页
+  pastOrders: 'Past orders',
+  viewAll: 'View all',
+  recommended: 'Recommended',
 }
 
 export type Dict = typeof en
@@ -349,6 +353,10 @@ const zh: Dict = {
   cancelOrder: '取消订单',
   orderCancelled: '订单已取消',
   cancelConfirm: '确定取消这个订单吗？',
+  // 资料页 / 搜索页
+  pastOrders: '过往订单',
+  viewAll: '查看全部',
+  recommended: '推荐商品',
 }
 
 const zhTW: Dict = {
@@ -510,6 +518,10 @@ const zhTW: Dict = {
   cancelOrder: '取消訂單',
   orderCancelled: '訂單已取消',
   cancelConfirm: '確定要取消這個訂單嗎？',
+  // 資料頁 / 搜尋頁
+  pastOrders: '過往訂單',
+  viewAll: '查看全部',
+  recommended: '推薦商品',
 }
 
 const ja: Dict = {
@@ -674,6 +686,10 @@ const ja: Dict = {
   cancelOrder: '注文をキャンセル',
   orderCancelled: '注文をキャンセルしました',
   cancelConfirm: 'この注文をキャンセルしますか？',
+  // プロフィール / 検索
+  pastOrders: '過去の注文',
+  viewAll: 'すべて見る',
+  recommended: 'おすすめ商品',
 }
 
 export function getDictionary(lang: Lang): Dict {

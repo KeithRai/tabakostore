@@ -4,7 +4,7 @@ import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
 import ProductCard from '@/components/product-card'
 import type { Product } from '@/lib/types'
 
-// 搜索页：按名称/描述搜索商品
+// 搜索页：按名称/描述搜索商品，搜索栏下方显示推荐商品
 export const dynamic = 'force-dynamic'
 
 export default async function SearchPage({
@@ -58,7 +58,23 @@ export default async function SearchPage({
             ))}
           </div>
         )
-      ) : null}
+      ) : (
+        /* 搜索栏下方：推荐商品 */
+        <>
+          <h2>{tr(dict, 'recommended')}</h2>
+          {all.length === 0 ? (
+            <div className="empty">
+              <p>{tr(dict, 'noProducts')}</p>
+            </div>
+          ) : (
+            <div className="grid">
+              {all.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }
