@@ -95,8 +95,25 @@ export default function Navbar() {
           </svg>
           {count > 0 ? <span className="cart-badge">{count}</span> : null}
         </Link>
-        <button type="button" className="link-btn" onClick={openChat}>
-          {t('contactUs')}
+        {/* 联系客服：仅图标 */}
+        <button
+          type="button"
+          className="icon-btn"
+          onClick={openChat}
+          aria-label={t('contactUs')}
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+          </svg>
         </button>
         {/* 用户头像（在 menu 和 language 之间） */}
         <Link
@@ -111,7 +128,21 @@ export default function Navbar() {
               alt=""
             />
           ) : (
-            <span className="avatar-icon">👤</span>
+            <span className="avatar-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </span>
           )}
         </Link>
         <LanguageSwitcher />

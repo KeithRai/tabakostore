@@ -52,7 +52,7 @@ export default function NavMenu({
       {open && (
         <div className="menu-panel">
           <Link href="/" className="menu-home" onClick={close}>
-            🏠 {t('home')}
+            {t('home')}
           </Link>
 
           {!loading && user ? (

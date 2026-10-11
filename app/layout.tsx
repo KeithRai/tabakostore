@@ -4,6 +4,7 @@ import Script from 'next/script'
 import './globals.css'
 import { CartProvider } from '@/components/cart-provider'
 import { LangProvider } from '@/components/lang-provider'
+import { CurrencyProvider } from '@/components/currency-provider'
 import Navbar from '@/components/navbar'
 import AgeGate from '@/components/age-gate'
 import BackToTop from '@/components/back-to-top'
@@ -44,13 +45,15 @@ export default async function RootLayout({
       <body>
         <LangProvider lang={lang}>
           <CartProvider>
-            <Navbar />
-            <main className="container">{children}</main>
-            <footer className="footer">
-              © {new Date().getFullYear()} TabakoStore
-            </footer>
-            <AgeGate />
-            <BackToTop />
+            <CurrencyProvider>
+              <Navbar />
+              <main className="container">{children}</main>
+              <footer className="footer">
+                © {new Date().getFullYear()} TabakoStore
+              </footer>
+              <AgeGate />
+              <BackToTop />
+            </CurrencyProvider>
           </CartProvider>
         </LangProvider>
         {tidio ? <TidioWidget code={tidio} /> : null}

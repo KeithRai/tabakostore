@@ -1,7 +1,7 @@
 'use client'
 
 import { useLang } from './lang-provider'
-import { usd } from '@/lib/format'
+import { useCurrency } from './currency-provider'
 import { openChat } from './navbar'
 
 // 下单成功后的"联系客服支付"弹窗
@@ -15,6 +15,7 @@ export default function PaymentModal({
   onClose: () => void
 }) {
   const { t } = useLang()
+  const { cny, jpy } = useCurrency()
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -26,7 +27,9 @@ export default function PaymentModal({
         </div>
         <div className="modal-row">
           <span>{t('total')}</span>
-          <strong>{usd(total)}</strong>
+          <strong>
+            {cny(total)} / {jpy(total)}
+          </strong>
         </div>
         <h3>{t('howToPay')}</h3>
         <ol>

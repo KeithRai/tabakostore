@@ -38,6 +38,7 @@ export type Order = {
   email: string
   full_name: string
   country: string | null
+  city: string | null
   address: string
   phone: string | null
   created_at: string
@@ -47,6 +48,7 @@ export type Order = {
 export type CheckoutInfo = {
   full_name: string
   country: string
+  city: string
   address: string
   phone: string
 }

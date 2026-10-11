@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { upsertProduct, deleteProduct } from '../actions'
 import { usd } from '@/lib/format'
 import { useLang } from '@/components/lang-provider'
+import { useCurrency } from '@/components/currency-provider'
 import type { Product } from '@/lib/types'
 
 // 商品管理：新增/编辑（含种类、多张图片）+ 删除
@@ -16,7 +17,9 @@ export default function ProductsClient({
 }) {
   const router = useRouter()
   const { t } = useLang()
-  const [showList, setShowList] = useState(true)
+  const { cny, jpy } = useCurrency()
+  // 视图切换：新增商品表单 和 现有商品列表 分开显示
+  const [view, setView] = useState<'form' | 'list'>('form')
   const [editingId, setEditingId] = useState('')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -93,25 +96,27 @@ export default function ProductsClient({
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             type="button"
-            className="btn btn-outline btn-sm"
+            className={`btn btn-sm ${view === 'form' ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => {
               resetForm()
-              window.scrollTo({ top: 0, behavior: 'smooth' })
+              setView('form')
             }}
           >
             ＋ 新增商品
           </button>
           <button
             type="button"
-            className="btn btn-outline btn-sm"
-            onClick={() => setShowList((v) => !v)}
+            className={`btn btn-sm ${view === 'list' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setView('list')}
           >
             {t('existingProducts')}（{products.length}）
           </button>
         </div>
       </div>
 
-      <form className="admin-panel" onSubmit={onSubmit}>
+      {/* 新增/编辑商品表单（单独显示） */}
+      {view === 'form' && (
+        <form className="admin-panel" onSubmit={onSubmit}>
         <h2 style={{ marginTop: 0 }}>
           {editingId ? '编辑商品' : '新增商品'}
         </h2>
@@ -144,6 +149,13 @@ export default function ProductsClient({
             onChange={(e) => setPrice(e.target.value)}
             placeholder="例如 24.99"
           />
+          {/* 汇率换算提示（人民币 / 日元） */}
+          {price ? (
+            <p className="muted">
+              ≈ {cny(parseFloat(price) || 0)} /{' '}
+              {jpy(parseFloat(price) || 0)}
+            </p>
+          ) : null}
         </div>
         <div className="field">
           <label className="label">库存数量 *</label>
@@ -206,9 +218,10 @@ export default function ProductsClient({
           </button>
         </div>
       </form>
+      )}
 
-      {/* 现有商品列表（由按钮控制显隐） */}
-      {showList && (
+      {/* 现有商品列表（单独显示，不与新增商品在一起） */}
+      {view === 'list' && (
         <>
           <h2>
             {t('existingProducts')}（{products.length}）
@@ -240,7 +253,8 @@ export default function ProductsClient({
                   <div className="admin-product-info">
                     <div style={{ fontWeight: 600 }}>{p.name}</div>
                     <div className="muted">
-                      {usd(p.price)} · 库存 {p.stock}
+                      {usd(p.price)} · {cny(parseFloat(p.price))} /{' '}
+                      {jpy(parseFloat(p.price))} · 库存 {p.stock}
                       {p.category ? ` · ${p.category}` : ''}
                     </div>
                   </div>

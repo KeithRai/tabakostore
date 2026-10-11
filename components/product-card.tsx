@@ -4,13 +4,14 @@ import Link from 'next/link'
 import { useCart } from './cart-provider'
 import { useLang } from './lang-provider'
 import { useCurrentUser } from './use-current-user'
-import { usd } from '@/lib/format'
+import { useCurrency } from './currency-provider'
 import type { Product } from '@/lib/types'
 
 export default function ProductCard({ product }: { product: Product }) {
   const { add } = useCart()
   const { t } = useLang()
   const { isLoggedIn } = useCurrentUser()
+  const { cny, jpy } = useCurrency()
   const price = parseFloat(product.price)
   const out = product.stock <= 0
 
@@ -22,13 +23,20 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <div className="card">
-      {cover ? (
-        <img className="card-img" src={cover} alt={product.name} />
-      ) : (
-        <div className="card-img card-img-empty">{t('noImage')}</div>
-      )}
+      {/* 点击商品图跳转详情页 */}
+      <Link href={`/product/${product.id}`} className="card-link">
+        {cover ? (
+          <img className="card-img" src={cover} alt={product.name} />
+        ) : (
+          <div className="card-img card-img-empty">{t('noImage')}</div>
+        )}
+      </Link>
       <div className="card-body">
-        <h3 className="card-title">{product.name}</h3>
+        <h3 className="card-title">
+          <Link href={`/product/${product.id}`} className="card-link">
+            {product.name}
+          </Link>
+        </h3>
         {product.category ? (
           <p className="card-category">{product.category}</p>
         ) : null}
@@ -36,7 +44,11 @@ export default function ProductCard({ product }: { product: Product }) {
           <p className="card-desc">{product.description}</p>
         ) : null}
         <div className="card-foot">
-          <span className="price">{usd(price)}</span>
+          <div>
+            {/* 人民币 + 日元双币显示 */}
+            <div className="price">{cny(price)}</div>
+            <div className="price-jpy">{jpy(price)}</div>
+          </div>
           <span className={out ? 'stock stock-out' : 'stock'}>
             {out ? t('outOfStock') : t('inStock', { n: product.stock })}
           </span>

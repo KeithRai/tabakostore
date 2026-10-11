@@ -1,7 +1,11 @@
 import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase-service'
-import { usd } from '@/lib/format'
+import {
+  getRates,
+  formatCNY,
+  formatJPY,
+} from '@/lib/currency'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
 import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
 import AddToCartButton from '@/components/add-to-cart-button'
@@ -21,6 +25,9 @@ export default async function ProductPage({
     ? (rawLang as Lang)
     : 'en'
   const dict = getDictionary(lang)
+
+  // 实时汇率
+  const rates = await getRates()
 
   const db = createServiceClient()
   const { data } = await db.from('products').select('*').eq('id', id).single()
@@ -45,8 +52,12 @@ export default async function ProductPage({
         {product.category ? (
           <p className="muted">{product.category}</p>
         ) : null}
+        {/* 人民币 + 日元双币显示 */}
         <div className="price" style={{ fontSize: 28 }}>
-          {usd(product.price)}
+          {formatCNY(parseFloat(product.price), rates)}
+        </div>
+        <div className="price-jpy" style={{ fontSize: 16 }}>
+          {formatJPY(parseFloat(product.price), rates)}
         </div>
         <p className={product.stock > 0 ? 'stock' : 'stock stock-out'}>
           {product.stock > 0

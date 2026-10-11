@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import { updateOrderStatus } from '../actions'
-import { usd, ORDER_STATUS_ZH } from '@/lib/format'
+import { ORDER_STATUS_ZH } from '@/lib/format'
+import { useCurrency } from '@/components/currency-provider'
 import type { Order } from '@/lib/types'
 
 const STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled']
@@ -10,6 +11,7 @@ const STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled']
 // 订单管理：查看订单详情、修改订单状态
 export default function OrdersClient({ orders }: { orders: Order[] }) {
   const router = useRouter()
+  const { cny, jpy } = useCurrency()
 
   async function onChange(id: string, status: string) {
     const res = await updateOrderStatus(id, status)
@@ -48,20 +50,23 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
               客户：{order.full_name} · {order.email} · {order.country}
             </div>
             <div className="muted">
-              地址：{order.address}
+              地址：{order.city ? `${order.city}, ` : ''}
+              {order.address}
               {order.phone ? ` · 电话：${order.phone}` : ''}
             </div>
             <div className="order-items">
               {order.order_items.map((item) => (
                 <div key={item.id}>
                   {item.product_name} × {item.quantity} —{' '}
-                  {usd(item.price)}
+                  {cny(parseFloat(item.price))} / {jpy(parseFloat(item.price))}
                 </div>
               ))}
             </div>
             <div className="cart-total">
               <span>订单金额：</span>
-              <strong>{usd(order.total)}</strong>
+              <strong>
+                {cny(parseFloat(order.total))} / {jpy(parseFloat(order.total))}
+              </strong>
             </div>
             <div className="status-form">
               <select

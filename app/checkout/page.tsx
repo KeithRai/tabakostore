@@ -6,13 +6,14 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import { useCart } from '@/components/cart-provider'
 import { useLang } from '@/components/lang-provider'
+import { useCurrency } from '@/components/currency-provider'
 import { createOrder } from './actions'
 import PaymentModal from '@/components/payment-modal'
-import { usd } from '@/lib/format'
 
 export default function CheckoutPage() {
   const { items, total, clear } = useCart()
   const { t } = useLang()
+  const { cny, jpy } = useCurrency()
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
@@ -20,6 +21,13 @@ export default function CheckoutPage() {
   const [result, setResult] = useState<{ orderNo: string; total: number } | null>(
     null
   )
+
+  // 收货信息（登录后自动填入资料页保存的地址和手机号）
+  const [fullName, setFullName] = useState('')
+  const [country, setCountry] = useState('')
+  const [city, setCity] = useState('')
+  const [address, setAddress] = useState('')
+  const [phone, setPhone] = useState('')
 
   useEffect(() => {
     createClient()
@@ -29,20 +37,34 @@ export default function CheckoutPage() {
           router.push('/login?next=/checkout')
         } else {
           setEmail(data.user.email ?? '')
+          // 自动填入资料页保存的收货地址和手机号
+          const meta = (data.user.user_metadata ?? {}) as Record<
+            string,
+            unknown
+          >
+          if (meta.address) setAddress(String(meta.address))
+          if (meta.phone) setPhone(String(meta.phone))
         }
       })
   }, [router])
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const fd = new FormData(e.currentTarget)
     const info = {
-      full_name: String(fd.get('full_name') ?? '').trim(),
-      country: String(fd.get('country') ?? '').trim(),
-      address: String(fd.get('address') ?? '').trim(),
-      phone: String(fd.get('phone') ?? '').trim(),
+      full_name: fullName.trim(),
+      country: country.trim(),
+      city: city.trim(),
+      address: address.trim(),
+      phone: phone.trim(),
     }
-    if (!info.full_name || !info.country || !info.address) {
+    // 姓名、国家、城市、地址、电话均为必填
+    if (
+      !info.full_name ||
+      !info.country ||
+      !info.city ||
+      !info.address ||
+      !info.phone
+    ) {
       setError(t('fillRequired'))
       return
     }
@@ -92,13 +114,16 @@ export default function CheckoutPage() {
       <ul className="summary">
         {items.map((i) => (
           <li key={i.id}>
-            {i.name} × {i.qty} — {usd(i.price * i.qty)}
+            {i.name} × {i.qty} — {cny(i.price * i.qty)} /{' '}
+            {jpy(i.price * i.qty)}
           </li>
         ))}
       </ul>
       <div className="cart-total">
         <span>{t('total')}:</span>
-        <strong>{usd(total)}</strong>
+        <strong>
+          {cny(total)} / {jpy(total)}
+        </strong>
       </div>
 
       <h2>{t('shippingInfo')}</h2>
@@ -107,31 +132,53 @@ export default function CheckoutPage() {
         <input className="input" type="email" value={email} readOnly />
       </div>
       <div className="field">
-        <label className="label">{t('fullName')}</label>
-        <input className="input" name="full_name" required />
-      </div>
-      <div className="field">
-        <label className="label">{t('country')}</label>
+        <label className="label">{t('fullName')} *</label>
         <input
           className="input"
-          name="country"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          required
+        />
+      </div>
+      <div className="field">
+        <label className="label">{t('country')} *</label>
+        <input
+          className="input"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
           required
           placeholder={t('countryPlaceholder')}
         />
       </div>
       <div className="field">
-        <label className="label">{t('address')}</label>
+        <label className="label">{t('city')} *</label>
+        <input
+          className="input"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          required
+          placeholder={t('cityPlaceholder')}
+        />
+      </div>
+      <div className="field">
+        <label className="label">{t('address')} *</label>
         <textarea
           className="input"
-          name="address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
           required
           rows={3}
           placeholder={t('addressPlaceholder')}
         />
       </div>
       <div className="field">
-        <label className="label">{t('phone')}</label>
-        <input className="input" name="phone" />
+        <label className="label">{t('phone')} *</label>
+        <input
+          className="input"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+        />
       </div>
 
       <h2>{t('paymentMethod')}</h2>

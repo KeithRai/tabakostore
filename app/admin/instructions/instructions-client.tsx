@@ -3,13 +3,15 @@
 import { FormEvent, useState } from 'react'
 import { updateInstructions } from '../actions'
 
-// 商家说明编辑（内容显示在"帮助"页面）
+// 后台帮助信息编辑（内容显示在"帮助"页面）
 export default function InstructionsClient({
   initialContent,
 }: {
   initialContent: string
 }) {
   const [content, setContent] = useState(initialContent)
+  // 已保存的内容（用于预览）
+  const [savedContent, setSavedContent] = useState(initialContent)
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -25,6 +27,7 @@ export default function InstructionsClient({
       setMsg('❌ ' + res.error)
     } else {
       setMsg('✅ 保存成功')
+      setSavedContent(content)
     }
   }
 
@@ -34,6 +37,15 @@ export default function InstructionsClient({
       <p className="muted">
         在这里填写展示在"帮助"页面的说明内容（例如：付款方式、发货时间、退换政策等）。
       </p>
+
+      {/* 当前已保存的信息（帮助页面实际展示的内容） */}
+      {savedContent ? (
+        <div className="admin-panel">
+          <h3 style={{ marginTop: 0 }}>当前帮助页展示内容</h3>
+          <p style={{ whiteSpace: 'pre-wrap' }}>{savedContent}</p>
+        </div>
+      ) : null}
+
       <form className="form" onSubmit={onSubmit}>
         <div className="field">
           <label className="label">说明内容</label>

@@ -94,8 +94,9 @@ export async function createOrder(
       email: user.email,
       full_name: info.full_name,
       country: info.country,
+      city: info.city,
       address: info.address,
-      phone: info.phone || null,
+      phone: info.phone,
     })
     .select('id')
     .single()

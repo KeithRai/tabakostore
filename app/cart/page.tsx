@@ -3,12 +3,13 @@
 import Link from 'next/link'
 import { useCart } from '@/components/cart-provider'
 import { useLang } from '@/components/lang-provider'
-import { usd } from '@/lib/format'
+import { useCurrency } from '@/components/currency-provider'
 import { MAX_ORDER } from '@/lib/constants'
 
 export default function CartPage() {
   const { items, setQty, remove, total } = useCart()
   const { t } = useLang()
+  const { cny, jpy } = useCurrency()
 
   if (items.length === 0) {
     return (
@@ -46,7 +47,11 @@ export default function CartPage() {
                   <Link href={`/product/${item.id}`}>{item.name}</Link>
                 </div>
               </td>
-              <td>{usd(item.price)}</td>
+              <td>
+                {cny(item.price)}
+                <br />
+                <span className="price-jpy">{jpy(item.price)}</span>
+              </td>
               <td>
                 <div className="qty">
                   <button type="button" onClick={() => setQty(item.id, item.qty - 1)}>
@@ -58,7 +63,11 @@ export default function CartPage() {
                   </button>
                 </div>
               </td>
-              <td>{usd(item.price * item.qty)}</td>
+              <td>
+                {cny(item.price * item.qty)}
+                <br />
+                <span className="price-jpy">{jpy(item.price * item.qty)}</span>
+              </td>
               <td>
                 <button
                   className="btn btn-danger btn-sm"
@@ -73,7 +82,9 @@ export default function CartPage() {
       </table>
       <div className="cart-total">
         <span>{t('total')}:</span>
-        <strong>{usd(total)}</strong>
+        <strong>
+          {cny(total)} / {jpy(total)}
+        </strong>
       </div>
       <div className="cart-actions">
         <Link className="btn btn-primary" href="/checkout">
