@@ -60,3 +60,11 @@ export type News = {
   image_url: string | null
   created_at: string
 }
+
+// 费用设置（购物车结算时收取）
+export type FeeSettings = {
+  serviceRate: number // 服务费比例（0.1 = 10%）
+  packingJpy: number // 包装费（日元）
+  shippingJpy: number // 运费（日元）
+  settlementCny: number // 国际结算手续费（人民币）
+}

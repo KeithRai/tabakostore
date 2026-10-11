@@ -5,6 +5,8 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase-server'
 import { createServiceClient } from '@/lib/supabase-service'
 import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
+import { getRates } from '@/lib/currency'
+import { getFees } from '@/app/admin/actions'
 import type { CartItem, CheckoutInfo } from '@/lib/types'
 
 type Result = { error?: string; order_no?: string; total?: number }
@@ -78,6 +80,22 @@ export async function createOrder(
     })
   }
   total = Math.round(total * 100) / 100
+
+  // 计入费用：服务费 + 包装费 + 运费 + 国际结算手续费
+  const fees = await getFees()
+  const rates = await getRates()
+  const serviceFeeUsd = total * fees.serviceRate
+  const packingFeeUsd = fees.packingJpy / rates.JPY
+  const shippingFeeUsd = fees.shippingJpy / rates.JPY
+  const settlementFeeUsd = fees.settlementCny / rates.CNY
+  total = Math.round(
+    (total +
+      serviceFeeUsd +
+      packingFeeUsd +
+      shippingFeeUsd +
+      settlementFeeUsd) *
+      100
+  ) / 100
 
   const orderNo =
     'TB' +

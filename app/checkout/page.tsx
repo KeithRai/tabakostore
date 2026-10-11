@@ -7,14 +7,18 @@ import { createClient } from '@/lib/supabase-browser'
 import { useCart } from '@/components/cart-provider'
 import { useLang } from '@/components/lang-provider'
 import { useCurrency } from '@/components/currency-provider'
+import { getFees } from '@/app/admin/actions'
+import { DEFAULT_FEES } from '@/lib/constants'
 import { createOrder } from './actions'
 import PaymentModal from '@/components/payment-modal'
+import type { FeeSettings } from '@/lib/types'
 
 export default function CheckoutPage() {
   const { items, total, clear } = useCart()
   const { t } = useLang()
-  const { cny, jpy } = useCurrency()
+  const { cny, jpy, rates } = useCurrency()
   const router = useRouter()
+  const [fees, setFees] = useState<FeeSettings>(DEFAULT_FEES)
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -28,6 +32,21 @@ export default function CheckoutPage() {
   const [city, setCity] = useState('')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
+
+  // 费用计算（美元基准 → 双币显示）
+  const serviceFee = total * fees.serviceRate
+  const packingFee = fees.packingJpy / rates.JPY
+  const shippingFee = fees.shippingJpy / rates.JPY
+  const settlementFee = fees.settlementCny / rates.CNY
+  const grandTotal =
+    total + serviceFee + packingFee + shippingFee + settlementFee
+
+  // 读取费用设置
+  useEffect(() => {
+    getFees()
+      .then(setFees)
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     createClient()
@@ -119,11 +138,47 @@ export default function CheckoutPage() {
           </li>
         ))}
       </ul>
-      <div className="cart-total">
-        <span>{t('total')}:</span>
-        <strong>
-          {cny(total)} / {jpy(total)}
-        </strong>
+
+      {/* 费用明细（与合计格式一致） */}
+      <div className="fee-list">
+        <div className="fee-row">
+          <span>{t('goodsTotal')}</span>
+          <strong>
+            {cny(total)} / {jpy(total)}
+          </strong>
+        </div>
+        <div className="fee-row">
+          <span>
+            {t('serviceFee')}（{Math.round(fees.serviceRate * 100)}%）
+          </span>
+          <strong>
+            {cny(serviceFee)} / {jpy(serviceFee)}
+          </strong>
+        </div>
+        <div className="fee-row">
+          <span>{t('packingFee')}</span>
+          <strong>
+            {cny(packingFee)} / {jpy(packingFee)}
+          </strong>
+        </div>
+        <div className="fee-row">
+          <span>{t('shippingFee')}</span>
+          <strong>
+            {cny(shippingFee)} / {jpy(shippingFee)}
+          </strong>
+        </div>
+        <div className="fee-row">
+          <span>{t('settlementFee')}</span>
+          <strong>
+            {cny(settlementFee)} / {jpy(settlementFee)}
+          </strong>
+        </div>
+        <div className="fee-row fee-total">
+          <span>{t('total')}:</span>
+          <strong>
+            {cny(grandTotal)} / {jpy(grandTotal)}
+          </strong>
+        </div>
       </div>
 
       <h2>{t('shippingInfo')}</h2>

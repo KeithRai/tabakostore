@@ -178,6 +178,17 @@ const en = {
   newsImage: 'News Image',
   // 商品管理
   existingProducts: 'Products',
+  // 费用
+  serviceFee: 'Service fee',
+  packingFee: 'Packing fee',
+  shippingFee: 'Shipping fee',
+  settlementFee: 'International transaction fee',
+  goodsTotal: 'Goods subtotal',
+  feeSettings: 'Fee Settings',
+  // 取消订单
+  cancelOrder: 'Cancel order',
+  orderCancelled: 'Order cancelled',
+  cancelConfirm: 'Cancel this order?',
 }
 
 export type Dict = typeof en
@@ -327,6 +338,17 @@ const zh: Dict = {
   newsImage: '新闻图片',
   // 商品管理
   existingProducts: '现有商品',
+  // 费用
+  serviceFee: '服务费',
+  packingFee: '包装费',
+  shippingFee: '运费',
+  settlementFee: '国际结算手续费',
+  goodsTotal: '商品合计',
+  feeSettings: '费用设置',
+  // 取消订单
+  cancelOrder: '取消订单',
+  orderCancelled: '订单已取消',
+  cancelConfirm: '确定取消这个订单吗？',
 }
 
 const zhTW: Dict = {
@@ -477,6 +499,17 @@ const zhTW: Dict = {
   newsImage: '新聞圖片',
   // 商品管理
   existingProducts: '現有商品',
+  // 費用
+  serviceFee: '服務費',
+  packingFee: '包裝費',
+  shippingFee: '運費',
+  settlementFee: '國際結算手續費',
+  goodsTotal: '商品合計',
+  feeSettings: '費用設置',
+  // 取消訂單
+  cancelOrder: '取消訂單',
+  orderCancelled: '訂單已取消',
+  cancelConfirm: '確定要取消這個訂單嗎？',
 }
 
 const ja: Dict = {
@@ -630,6 +663,17 @@ const ja: Dict = {
   newsImage: 'ニュース画像',
   // 商品管理
   existingProducts: '商品一覧',
+  // 費用
+  serviceFee: 'サービス料',
+  packingFee: '梱包料',
+  shippingFee: '送料',
+  settlementFee: '国際決済手数料',
+  goodsTotal: '商品小計',
+  feeSettings: '費用設定',
+  // 注文キャンセル
+  cancelOrder: '注文をキャンセル',
+  orderCancelled: '注文をキャンセルしました',
+  cancelConfirm: 'この注文をキャンセルしますか？',
 }
 
 export function getDictionary(lang: Lang): Dict {

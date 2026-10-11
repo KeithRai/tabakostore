@@ -10,6 +10,7 @@ import {
 } from '@/lib/currency'
 import { orderStatusLabel } from '@/lib/format'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
+import CancelOrderButton from '@/components/cancel-order-button'
 import type { Order } from '@/lib/types'
 
 export default async function OrdersPage() {
@@ -80,6 +81,11 @@ export default async function OrdersPage() {
             </div>
             {order.status === 'pending' ? (
               <p className="muted">{tr(dict, 'pendingNote')}</p>
+            ) : null}
+            {order.status === 'pending' ? (
+              <div style={{ marginTop: 10 }}>
+                <CancelOrderButton orderId={order.id} />
+              </div>
             ) : null}
           </div>
         ))

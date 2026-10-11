@@ -1,5 +1,7 @@
 // 全局业务规则常量（单一数据源，前后端共用）
 
+import type { FeeSettings } from './types'
+
 // 单件商品最多购买数量
 export const MAX_PER_ITEM = 20
 
@@ -32,3 +34,11 @@ export const PHONE_CODES: Array<{ code: string; label: string }> = [
   { code: '+62', label: '印度尼西亚' },
   { code: '+91', label: '印度' },
 ]
+
+// 默认费用设置（后台可调整）
+export const DEFAULT_FEES: FeeSettings = {
+  serviceRate: 0.1, // 服务费：商品合计的 10%
+  packingJpy: 300, // 包装费：300 日元
+  shippingJpy: 500, // 运费：500 日元
+  settlementCny: 100, // 国际结算手续费：100 人民币
+}

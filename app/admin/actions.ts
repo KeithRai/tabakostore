@@ -4,6 +4,9 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase-service'
 import { sha256, adminToken, requireAdmin } from '@/lib/admin-auth'
+import { getRates } from '@/lib/currency'
+import { DEFAULT_FEES } from '@/lib/constants'
+import type { FeeSettings } from '@/lib/types'
 
 // 管理后台登录：验证密码后写入 httpOnly cookie
 export async function adminLogin(password: string) {
@@ -36,7 +39,8 @@ export async function upsertProduct(formData: FormData) {
   const id = String(formData.get('id') ?? '').trim()
   const name = String(formData.get('name') ?? '').trim()
   const description = String(formData.get('description') ?? '').trim()
-  const price = parseFloat(String(formData.get('price') ?? ''))
+  // 后台以人民币填写价格
+  const priceCny = parseFloat(String(formData.get('price') ?? ''))
   const stock = parseInt(String(formData.get('stock') ?? ''), 10)
   const category = String(formData.get('category') ?? '').trim()
   const existingImage = String(formData.get('image_url') ?? '').trim()
@@ -53,9 +57,19 @@ export async function upsertProduct(formData: FormData) {
     }
   })()
 
-  if (!name || isNaN(price) || isNaN(stock) || stock < 0) {
+  if (
+    !name ||
+    isNaN(priceCny) ||
+    priceCny < 0 ||
+    isNaN(stock) ||
+    stock < 0
+  ) {
     return { error: '请填写完整信息：名称必填，价格和库存必须是数字' }
   }
+
+  // 人民币价格 → 美元（数据库存储基准，按实时汇率换算）
+  const rates = await getRates()
+  const price = Math.round((priceCny / rates.CNY) * 100) / 100
 
   // 上传新图片（可多张）
   const newImages: string[] = []
@@ -206,5 +220,77 @@ export async function updateInstructions(formData: FormData) {
   if (error) return { error: '保存失败：' + error.message }
   revalidatePath('/admin/instructions')
   revalidatePath('/help')
+  return { success: true }
+}
+
+// 读取费用设置
+export async function getFees(): Promise<FeeSettings> {
+  const db = createServiceClient()
+  const { data } = await db
+    .from('settings')
+    .select('content')
+    .eq('id', 'fees')
+    .single()
+  if (data?.content) {
+    try {
+      const parsed = JSON.parse(data.content)
+      const num = (v: unknown, fallback: number) =>
+        typeof v === 'number' && v >= 0 ? v : fallback
+      return {
+        serviceRate: num(parsed.serviceRate, DEFAULT_FEES.serviceRate),
+        packingJpy: num(parsed.packingJpy, DEFAULT_FEES.packingJpy),
+        shippingJpy: num(parsed.shippingJpy, DEFAULT_FEES.shippingJpy),
+        settlementCny: num(
+          parsed.settlementCny,
+          DEFAULT_FEES.settlementCny
+        ),
+      }
+    } catch {
+      // JSON 解析失败时使用默认值
+    }
+  }
+  return { ...DEFAULT_FEES }
+}
+
+// 保存费用设置（后台）
+export async function saveFees(formData: FormData) {
+  await requireAdmin()
+  const serviceRate = parseFloat(
+    String(formData.get('serviceRate') ?? '')
+  )
+  const packingJpy = parseFloat(
+    String(formData.get('packingJpy') ?? '')
+  )
+  const shippingJpy = parseFloat(
+    String(formData.get('shippingJpy') ?? '')
+  )
+  const settlementCny = parseFloat(
+    String(formData.get('settlementCny') ?? '')
+  )
+
+  if (isNaN(serviceRate) || serviceRate < 0 || serviceRate > 100) {
+    return { error: '服务费比例必须是 0-100 之间的数字' }
+  }
+  if (
+    [packingJpy, shippingJpy, settlementCny].some(
+      (v) => isNaN(v) || v < 0
+    )
+  ) {
+    return { error: '费用必须是大于等于 0 的数字' }
+  }
+
+  const db = createServiceClient()
+  const { error } = await db.from('settings').upsert({
+    id: 'fees',
+    content: JSON.stringify({
+      serviceRate: serviceRate / 100,
+      packingJpy,
+      shippingJpy,
+      settlementCny,
+    }),
+    updated_at: new Date().toISOString(),
+  })
+  if (error) return { error: '保存失败：' + error.message }
+  revalidatePath('/admin/products')
   return { success: true }
 }

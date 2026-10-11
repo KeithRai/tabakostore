@@ -895,7 +895,7 @@ textarea.input {
 /* ===== 返回顶部按钮（玻璃质感） ===== */
 .back-to-top {
   position: fixed;
-  bottom: 92px;
+  bottom: 104px;
   right: 24px;
   transform: translateX(50%);
   width: 44px;
@@ -1181,6 +1181,26 @@ textarea.input {
 }
 .checkbox-field input {
   margin-top: 3px;
+}
+
+/* 费用明细 */
+.fee-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.fee-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.fee-row.fee-total {
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+  padding-top: 8px;
+  margin-top: 4px;
+  font-size: 16px;
 }
 
 select.input {
