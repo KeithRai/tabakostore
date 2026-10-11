@@ -5,7 +5,8 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase-server'
 import { createServiceClient } from '@/lib/supabase-service'
 import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
-import { getRates } from '@/lib/currency'
+import { getRates, formatCNY, formatJPY } from '@/lib/currency'
+import { sendOrderConfirmationEmail } from '@/lib/email'
 import { getFees } from '@/app/admin/actions'
 import type { CartItem, CheckoutInfo } from '@/lib/types'
 
@@ -145,6 +146,16 @@ export async function createOrder(
 
   revalidatePath('/admin/orders')
   revalidatePath('/orders', 'page')
+
+  // 发送订单确认邮件（未配置 RESEND_API_KEY 时自动跳过）
+  if (user.email) {
+    await sendOrderConfirmationEmail({
+      to: user.email,
+      orderNo,
+      totalCny: formatCNY(total, rates),
+      totalJpy: formatJPY(total, rates),
+    })
+  }
 
   return { order_no: orderNo, total }
 }

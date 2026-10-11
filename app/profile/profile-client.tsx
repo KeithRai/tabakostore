@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { FormEvent, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLang } from '@/components/lang-provider'
@@ -103,7 +104,13 @@ export default function ProfileClient({
             {preview ? (
               <img className="avatar-preview" src={preview} alt="" />
             ) : avatarUrl ? (
-              <img className="avatar-preview" src={avatarUrl} alt="" />
+              <Image
+                className="avatar-preview"
+                src={avatarUrl}
+                alt=""
+                width={80}
+                height={80}
+              />
             ) : (
               <div className="avatar-preview avatar-preview-empty">👤</div>
             )}

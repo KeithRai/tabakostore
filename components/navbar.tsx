@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
@@ -140,10 +141,12 @@ export default function Navbar() {
           aria-label={t('profile')}
         >
           {user?.user_metadata?.avatar_url ? (
-            <img
+            <Image
               className="avatar-img"
-              src={user.user_metadata.avatar_url}
+              src={String(user.user_metadata.avatar_url)}
               alt=""
+              width={32}
+              height={32}
             />
           ) : (
             <span className="avatar-icon">

@@ -1,13 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/components/cart-provider'
 import { useLang } from '@/components/lang-provider'
 import { useCurrency } from '@/components/currency-provider'
 import { getFees } from '@/app/admin/actions'
-import { DEFAULT_FEES } from '@/lib/constants'
-import { MAX_ORDER } from '@/lib/constants'
+import { getProductStocks } from '@/app/actions'
+import { DEFAULT_FEES, MAX_ORDER } from '@/lib/constants'
 import type { FeeSettings } from '@/lib/types'
 
 export default function CartPage() {
@@ -15,11 +16,20 @@ export default function CartPage() {
   const { t } = useLang()
   const { cny, jpy, rates } = useCurrency()
   const [fees, setFees] = useState<FeeSettings>(DEFAULT_FEES)
+  // 商品实时库存（用于限制购物车数量上限）
+  const [stocks, setStocks] = useState<Record<string, number>>({})
 
   // 读取费用设置
   useEffect(() => {
     getFees()
       .then(setFees)
+      .catch(() => {})
+  }, [])
+
+  // 读取商品库存
+  useEffect(() => {
+    getProductStocks()
+      .then(setStocks)
       .catch(() => {})
   }, [])
 
@@ -58,14 +68,33 @@ export default function CartPage() {
           </tr>
         </thead>
         <tbody>
-          {items.map((item) => (
+          {items.map((item) => {
+            // 实时库存（undefined 表示还没读取到）
+            const stock = stocks[item.id]
+            // 数量已达库存上限
+            const atStockLimit = stock !== undefined && item.qty >= stock
+            return (
             <tr key={item.id}>
               <td>
                 <div className="cell-product">
                   {item.image_url ? (
-                    <img className="cell-img" src={item.image_url} alt="" />
+                    <Image
+                      className="cell-img"
+                      src={item.image_url}
+                      alt=""
+                      width={48}
+                      height={48}
+                    />
                   ) : null}
-                  <Link href={`/product/${item.id}`}>{item.name}</Link>
+                  <div>
+                    <Link href={`/product/${item.id}`}>{item.name}</Link>
+                    {/* 库存提示：数量已达库存上限时显示 */}
+                    {atStockLimit ? (
+                      <p className="muted" style={{ fontSize: 12 }}>
+                        {t('stockReached', { n: stock ?? 0 })}
+                      </p>
+                    ) : null}
+                  </div>
                 </div>
               </td>
               <td>
@@ -79,7 +108,12 @@ export default function CartPage() {
                     −
                   </button>
                   <span>{item.qty}</span>
-                  <button type="button" onClick={() => setQty(item.id, item.qty + 1)}>
+                  {/* 加号按钮：数量不能超过实时库存 */}
+                  <button
+                    type="button"
+                    disabled={atStockLimit}
+                    onClick={() => setQty(item.id, item.qty + 1)}
+                  >
                     ＋
                   </button>
                 </div>
@@ -100,7 +134,8 @@ export default function CartPage() {
                 </button>
               </td>
             </tr>
-          ))}
+            )
+          })}
         </tbody>
       </table>
 

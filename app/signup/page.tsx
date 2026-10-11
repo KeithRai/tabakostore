@@ -53,10 +53,16 @@ export default function SignupPage() {
     setError('')
     setMessage('')
 
+    // 验证邮件链接跳转回本站登录页
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (typeof window !== 'undefined' ? window.location.origin : '')
     const { error } = await createClient().auth.signUp({
       email,
       password,
       options: {
+        // 邮箱验证：验证完成后跳回登录页
+        emailRedirectTo: siteUrl ? `${siteUrl}/login` : undefined,
         data: {
           nickname: nickname.trim(),
           gender,
@@ -96,9 +102,11 @@ export default function SignupPage() {
     setBusy(false)
 
     if (session) {
+      // 已开启邮箱验证时不会返回 session，会走下面的提示分支
       router.push('/')
       router.refresh()
     } else {
+      // 需要邮箱验证：提示用户查收验证邮件
       setMessage(t('checkEmail'))
     }
   }

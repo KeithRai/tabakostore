@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase-server'
 import { createServiceClient } from '@/lib/supabase-service'
 import { getRates, formatCNY, formatJPY } from '@/lib/currency'
@@ -88,10 +89,12 @@ export default async function OrderDetailPage({
           {order.order_items.map((item) => (
             <div className="cell-product" key={item.id}>
               {item.image_url ? (
-                <img
+                <Image
                   className="cell-img"
                   src={item.image_url}
                   alt=""
+                  width={48}
+                  height={48}
                 />
               ) : null}
               <span>

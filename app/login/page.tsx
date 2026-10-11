@@ -27,7 +27,12 @@ export default function LoginPage() {
     })
     setBusy(false)
     if (error) {
-      setError(error.message)
+      // 邮箱未验证：显示本地化提示
+      if (error.message.toLowerCase().includes('not confirmed')) {
+        setError(t('emailNotConfirmed'))
+      } else {
+        setError(error.message)
+      }
       return
     }
     router.push(next)

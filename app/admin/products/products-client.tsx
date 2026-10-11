@@ -1,6 +1,7 @@
 'use client'
 
 import { FormEvent, useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { upsertProduct, deleteProduct } from '../actions'
 import { useLang } from '@/components/lang-provider'
@@ -207,7 +208,7 @@ export default function ProductsClient({
                 <div className="gallery-thumbs">
                   {existingImages.map((img) => (
                     <div className="gallery-thumb" key={img}>
-                      <img src={img} alt="" />
+                      <Image src={img} alt="" width={72} height={72} />
                     </div>
                   ))}
                 </div>
@@ -250,7 +251,7 @@ export default function ProductsClient({
               return (
                 <div className="admin-product-row" key={p.id}>
                   {cover ? (
-                    <img src={cover} alt="" />
+                    <Image src={cover} alt="" width={56} height={56} />
                   ) : (
                     <div
                       style={{

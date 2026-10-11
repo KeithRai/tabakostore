@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 // 商品图片画廊：主图 + 缩略图
 export default function ProductGallery({
@@ -18,7 +19,15 @@ export default function ProductGallery({
 
   return (
     <div>
-      <img className="detail-img" src={images[active]} alt={name} />
+      <Image
+        className="detail-img"
+        src={images[active]}
+        alt={name}
+        width={800}
+        height={800}
+        priority
+        sizes="(max-width: 900px) 100vw, 50vw"
+      />
       {images.length > 1 && (
         <div className="gallery-thumbs">
           {images.map((img, i) => (
@@ -28,7 +37,7 @@ export default function ProductGallery({
               className={`gallery-thumb${i === active ? ' active' : ''}`}
               onClick={() => setActive(i)}
             >
-              <img src={img} alt="" />
+              <Image src={img} alt="" width={72} height={72} />
             </button>
           ))}
         </div>

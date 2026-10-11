@@ -249,6 +249,25 @@ const en = {
   returnsShippingTitle: 'Shipping cost',
   returnsShipping:
     'Return shipping is paid by the buyer, except for quality issues.',
+  // 评价
+  reviews: 'Reviews',
+  avgRating: 'Average rating',
+  writeReview: 'Write a review',
+  yourRating: 'Your rating',
+  reviewContent: 'Review content',
+  submitReview: 'Submit review',
+  reviewSubmitted: 'Review submitted. Thank you!',
+  reviewDeleted: 'Review deleted.',
+  noReviews: 'No reviews yet. Be the first to review!',
+  reviewLoginHint: 'Please log in to write a review.',
+  reviewOnePerProduct: 'You have already reviewed this product.',
+  reviewError: 'Please select a rating and enter content.',
+  reviewConfirmDelete: 'Delete this review?',
+  // 库存提示
+  stockHint: 'Stock: {n}',
+  stockReached: 'Only {n} in stock',
+  emailNotConfirmed:
+    'This email is not verified yet. Please check your inbox for the verification link.',
 }
 
 export type Dict = typeof en
@@ -459,6 +478,24 @@ const zh: Dict = {
   returnsRefund: '退款按原支付方式退回。',
   returnsShippingTitle: '运费',
   returnsShipping: '退货运费由买家承担，质量问题除外。',
+  // 评价
+  reviews: '评价',
+  avgRating: '平均评分',
+  writeReview: '发表评价',
+  yourRating: '您的评分',
+  reviewContent: '评价内容',
+  submitReview: '提交评价',
+  reviewSubmitted: '评价已提交，谢谢！',
+  reviewDeleted: '评价已删除。',
+  noReviews: '暂无评价，快来抢沙发！',
+  reviewLoginHint: '请登录后发表评价。',
+  reviewOnePerProduct: '您已评价过该商品。',
+  reviewError: '请选择评分并填写内容。',
+  reviewConfirmDelete: '确定删除这条评价吗？',
+  // 库存提示
+  stockHint: '库存：{n}',
+  stockReached: '仅剩 {n} 件库存',
+  emailNotConfirmed: '邮箱尚未验证，请查收邮件中的验证链接后再登录。',
 }
 
 const zhTW: Dict = {
@@ -669,6 +706,24 @@ const zhTW: Dict = {
   returnsRefund: '退款按原支付方式退回。',
   returnsShippingTitle: '運費',
   returnsShipping: '退貨運費由買家承擔，質量問題除外。',
+  // 評價
+  reviews: '評價',
+  avgRating: '平均評分',
+  writeReview: '發表評價',
+  yourRating: '您的評分',
+  reviewContent: '評價內容',
+  submitReview: '提交評價',
+  reviewSubmitted: '評價已提交，謝謝！',
+  reviewDeleted: '評價已刪除。',
+  noReviews: '暫無評價，快來搶沙發！',
+  reviewLoginHint: '請登錄後發表評價。',
+  reviewOnePerProduct: '您已評價過該商品。',
+  reviewError: '請選擇評分並填寫內容。',
+  reviewConfirmDelete: '確定刪除這條評價嗎？',
+  // 庫存提示
+  stockHint: '庫存：{n}',
+  stockReached: '僅剩 {n} 件庫存',
+  emailNotConfirmed: '信箱尚未驗證，請查收郵件中的驗證連結後再登入。',
 }
 
 const ja: Dict = {
@@ -891,6 +946,25 @@ const ja: Dict = {
   returnsShippingTitle: '送料',
   returnsShipping:
     '返品送料はご購入者負担です（品質問題の場合は当店負担）。',
+  // レビュー
+  reviews: 'レビュー',
+  avgRating: '平均評価',
+  writeReview: 'レビューを書く',
+  yourRating: 'あなたの評価',
+  reviewContent: 'レビュー内容',
+  submitReview: 'レビューを送信',
+  reviewSubmitted: 'レビューを送信しました。ありがとうございます！',
+  reviewDeleted: 'レビューを削除しました。',
+  noReviews: 'まだレビューがありません。最初のレビューをどうぞ！',
+  reviewLoginHint: 'ログインしてレビューを書いてください。',
+  reviewOnePerProduct: 'この商品は既にレビュー済みです。',
+  reviewError: '評価を選択し、内容を入力してください。',
+  reviewConfirmDelete: 'このレビューを削除しますか？',
+  // 在庫表示
+  stockHint: '在庫：{n}',
+  stockReached: '在庫は{n}件のみ',
+  emailNotConfirmed:
+    'メールアドレスが未認証です。確認リンクに記載のメールをご確認ください。',
 }
 
 export function getDictionary(lang: Lang): Dict {

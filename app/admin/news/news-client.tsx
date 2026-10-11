@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { FormEvent, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { upsertNews, deleteNews } from '../actions'
@@ -111,7 +112,13 @@ export default function NewsClient({ news }: { news: News[] }) {
             {preview ? (
               <img className="avatar-preview" src={preview} alt="" />
             ) : imageUrl ? (
-              <img className="avatar-preview" src={imageUrl} alt="" />
+              <Image
+                className="avatar-preview"
+                src={imageUrl}
+                alt=""
+                width={80}
+                height={80}
+              />
             ) : (
               <div className="avatar-preview avatar-preview-empty">
                 🖼️

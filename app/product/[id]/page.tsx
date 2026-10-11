@@ -10,7 +10,9 @@ import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
 import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
 import AddToCartButton from '@/components/add-to-cart-button'
 import ProductGallery from '@/components/product-gallery'
+import ReviewSection from '@/components/review-section'
 import { buildMetadata } from '@/lib/seo'
+import { getReviews } from './actions'
 import type { Product } from '@/lib/types'
 
 // SEO（标题使用商品名称）
@@ -59,8 +61,12 @@ export default async function ProductPage({
         ? [product.image_url]
         : []
 
+  // 商品评价
+  const reviews = await getReviews(id)
+
   return (
-    <div className="two-col">
+    <>
+      <div className="two-col">
       <div>
         <ProductGallery images={images} name={product.name} />
       </div>
@@ -93,6 +99,12 @@ export default async function ProductPage({
           <p style={{ marginTop: 12 }}>{product.description}</p>
         ) : null}
       </div>
-    </div>
+      </div>
+
+      {/* 商品评价 */}
+      <div style={{ marginTop: 32 }}>
+        <ReviewSection productId={id} initialReviews={reviews} />
+      </div>
+    </>
   )
 }

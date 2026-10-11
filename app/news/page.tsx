@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import Image from 'next/image'
 import { createServiceClient } from '@/lib/supabase-service'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
 import { buildMetadata } from '@/lib/seo'
@@ -38,7 +39,14 @@ export default async function NewsPage() {
         news.map((n) => (
           <div className="news-item" key={n.id}>
             {n.image_url ? (
-              <img className="news-img" src={n.image_url} alt={n.title} />
+              <div className="news-img-wrap">
+                <Image
+                  src={n.image_url}
+                  alt={n.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 700px"
+                />
+              </div>
             ) : null}
             <h3>{n.title}</h3>
             <div className="news-date">

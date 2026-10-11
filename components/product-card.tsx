@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from './cart-provider'
 import { useLang } from './lang-provider'
@@ -26,7 +27,15 @@ export default function ProductCard({ product }: { product: Product }) {
       {/* 点击商品图跳转详情页 */}
       <Link href={`/product/${product.id}`} className="card-link">
         {cover ? (
-          <img className="card-img" src={cover} alt={product.name} />
+          <div className="card-img-wrap">
+            <Image
+              className="card-img"
+              src={cover}
+              alt={product.name}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            />
+          </div>
         ) : (
           <div className="card-img card-img-empty">{t('noImage')}</div>
         )}
