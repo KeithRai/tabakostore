@@ -3,11 +3,18 @@ import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase-service'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
 import { PAGE_SIZE } from '@/lib/constants'
+import { cleanupExpiredOrders } from '@/lib/order-utils'
+import { buildMetadata } from '@/lib/seo'
 import ProductCard from '@/components/product-card'
 import type { Product } from '@/lib/types'
 
 // 主页：分页显示商品，每页最多 20 件
 export const dynamic = 'force-dynamic'
+
+// SEO
+export function generateMetadata() {
+  return buildMetadata()
+}
 
 export default async function HomePage({
   searchParams,
@@ -23,6 +30,9 @@ export default async function HomePage({
     ? (rawLang as Lang)
     : 'en'
   const dict = getDictionary(lang)
+
+  // 清理超过 24 小时未付款的待支付订单
+  await cleanupExpiredOrders()
 
   const db = createServiceClient()
 

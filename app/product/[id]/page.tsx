@@ -10,7 +10,24 @@ import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
 import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
 import AddToCartButton from '@/components/add-to-cart-button'
 import ProductGallery from '@/components/product-gallery'
+import { buildMetadata } from '@/lib/seo'
 import type { Product } from '@/lib/types'
+
+// SEO（标题使用商品名称）
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const db = createServiceClient()
+  const { data } = await db
+    .from('products')
+    .select('name')
+    .eq('id', id)
+    .single()
+  return buildMetadata(undefined, data?.name)
+}
 
 export default async function ProductPage({
   params,

@@ -10,8 +10,15 @@ import {
 } from '@/lib/currency'
 import { orderStatusLabel } from '@/lib/format'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
+import { cleanupExpiredOrders } from '@/lib/order-utils'
+import { buildMetadata } from '@/lib/seo'
 import CancelOrderButton from '@/components/cancel-order-button'
 import type { Order } from '@/lib/types'
+
+// SEO
+export function generateMetadata() {
+  return buildMetadata('myOrders')
+}
 
 export default async function OrdersPage() {
   const cookieStore = await cookies()
@@ -20,6 +27,9 @@ export default async function OrdersPage() {
     ? (rawLang as Lang)
     : 'en'
   const dict = getDictionary(lang)
+
+  // 清理超过 24 小时未付款的待支付订单
+  await cleanupExpiredOrders()
 
   // 实时汇率
   const rates = await getRates()
@@ -41,6 +51,9 @@ export default async function OrdersPage() {
   return (
     <div>
       <h1>{tr(dict, 'myOrders')}</h1>
+      <p className="muted" style={{ marginBottom: 16 }}>
+        {tr(dict, 'pendingExpireNote')}
+      </p>
       {orders.length === 0 ? (
         <div className="empty">
           <p>{tr(dict, 'noOrders')}</p>
@@ -52,7 +65,9 @@ export default async function OrdersPage() {
         orders.map((order) => (
           <div className="order-card" key={order.id}>
             <div className="order-head">
-              <strong>{order.order_no}</strong>
+              <Link href={`/orders/${order.id}`}>
+                {order.order_no}
+              </Link>
               <span className={`status-pill ${order.status}`}>
                 {orderStatusLabel(order.status, lang)}
               </span>

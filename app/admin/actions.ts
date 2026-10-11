@@ -240,10 +240,9 @@ export async function getFees(): Promise<FeeSettings> {
       return {
         serviceRate: num(parsed.serviceRate, DEFAULT_FEES.serviceRate),
         packingJpy: num(parsed.packingJpy, DEFAULT_FEES.packingJpy),
-        shippingJpy: num(parsed.shippingJpy, DEFAULT_FEES.shippingJpy),
-        settlementCny: num(
-          parsed.settlementCny,
-          DEFAULT_FEES.settlementCny
+        settlementRate: num(
+          parsed.settlementRate,
+          DEFAULT_FEES.settlementRate
         ),
       }
     } catch {
@@ -254,6 +253,7 @@ export async function getFees(): Promise<FeeSettings> {
 }
 
 // 保存费用设置（后台）
+// 运费不固定：由客服确认后告知，不在此设置
 export async function saveFees(formData: FormData) {
   await requireAdmin()
   const serviceRate = parseFloat(
@@ -262,22 +262,18 @@ export async function saveFees(formData: FormData) {
   const packingJpy = parseFloat(
     String(formData.get('packingJpy') ?? '')
   )
-  const shippingJpy = parseFloat(
-    String(formData.get('shippingJpy') ?? '')
-  )
-  const settlementCny = parseFloat(
-    String(formData.get('settlementCny') ?? '')
+  const settlementRate = parseFloat(
+    String(formData.get('settlementRate') ?? '')
   )
 
   if (isNaN(serviceRate) || serviceRate < 0 || serviceRate > 100) {
     return { error: '服务费比例必须是 0-100 之间的数字' }
   }
-  if (
-    [packingJpy, shippingJpy, settlementCny].some(
-      (v) => isNaN(v) || v < 0
-    )
-  ) {
-    return { error: '费用必须是大于等于 0 的数字' }
+  if (isNaN(settlementRate) || settlementRate < 0 || settlementRate > 100) {
+    return { error: '国际结算手续费比例必须是 0-100 之间的数字' }
+  }
+  if (isNaN(packingJpy) || packingJpy < 0) {
+    return { error: '包装费必须是大于等于 0 的数字' }
   }
 
   const db = createServiceClient()
@@ -286,12 +282,12 @@ export async function saveFees(formData: FormData) {
     content: JSON.stringify({
       serviceRate: serviceRate / 100,
       packingJpy,
-      shippingJpy,
-      settlementCny,
+      settlementRate: settlementRate / 100,
     }),
     updated_at: new Date().toISOString(),
   })
   if (error) return { error: '保存失败：' + error.message }
   revalidatePath('/admin/products')
+  revalidatePath('/')
   return { success: true }
 }

@@ -6,8 +6,14 @@ import { createServiceClient } from '@/lib/supabase-service'
 import { getRates, formatCNY, formatJPY } from '@/lib/currency'
 import { orderStatusLabel } from '@/lib/format'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
+import { buildMetadata } from '@/lib/seo'
 import ProfileClient from './profile-client'
 import type { Order } from '@/lib/types'
+
+// SEO
+export function generateMetadata() {
+  return buildMetadata('myProfile')
+}
 
 // 用户个人资料页（需登录）+ 过往订单
 export default async function ProfilePage() {

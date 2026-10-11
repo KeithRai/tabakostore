@@ -34,12 +34,12 @@ export default function CheckoutPage() {
   const [phone, setPhone] = useState('')
 
   // 费用计算（美元基准 → 双币显示）
+  // 运费不固定：由客服确认后告知
   const serviceFee = total * fees.serviceRate
   const packingFee = fees.packingJpy / rates.JPY
-  const shippingFee = fees.shippingJpy / rates.JPY
-  const settlementFee = fees.settlementCny / rates.CNY
+  const settlementFee = total * fees.settlementRate
   const grandTotal =
-    total + serviceFee + packingFee + shippingFee + settlementFee
+    total + serviceFee + packingFee + settlementFee
 
   // 读取费用设置
   useEffect(() => {
@@ -163,23 +163,29 @@ export default function CheckoutPage() {
         </div>
         <div className="fee-row">
           <span>{t('shippingFee')}</span>
-          <strong>
-            {cny(shippingFee)} / {jpy(shippingFee)}
+          <strong className="muted">
+            {t('shippingConfirmed')}
           </strong>
         </div>
         <div className="fee-row">
-          <span>{t('settlementFee')}</span>
+          <span>
+            {t('settlementFee')}（
+            {Math.round(fees.settlementRate * 100)}%）
+          </span>
           <strong>
             {cny(settlementFee)} / {jpy(settlementFee)}
           </strong>
         </div>
         <div className="fee-row fee-total">
-          <span>{t('total')}:</span>
+          <span>{t('totalExclShipping')}:</span>
           <strong>
             {cny(grandTotal)} / {jpy(grandTotal)}
           </strong>
         </div>
       </div>
+      <p className="muted" style={{ marginTop: 8 }}>
+        {t('shippingNote')}
+      </p>
 
       <h2>{t('shippingInfo')}</h2>
       <div className="field">

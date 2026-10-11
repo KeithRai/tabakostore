@@ -5,13 +5,13 @@ import { getFees, saveFees } from '../actions'
 import { DEFAULT_FEES } from '@/lib/constants'
 import type { FeeSettings } from '@/lib/types'
 
-// 费用设置：服务费 / 包装费 / 运费 / 国际结算手续费
+// 费用设置：服务费 / 包装费 / 国际结算手续费
+// 运费不固定：下单后由客服确认实际运费
 export default function FeesClient() {
   const [fees, setFees] = useState<FeeSettings>(DEFAULT_FEES)
   const [feeRate, setFeeRate] = useState('10')
   const [feePacking, setFeePacking] = useState('300')
-  const [feeShipping, setFeeShipping] = useState('500')
-  const [feeSettlement, setFeeSettlement] = useState('100')
+  const [feeSettlement, setFeeSettlement] = useState('2')
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -22,8 +22,7 @@ export default function FeesClient() {
         setFees(f)
         setFeeRate(String(Math.round(f.serviceRate * 100)))
         setFeePacking(String(f.packingJpy))
-        setFeeShipping(String(f.shippingJpy))
-        setFeeSettlement(String(f.settlementCny))
+        setFeeSettlement(String(Math.round(f.settlementRate * 100)))
       })
       .catch(() => {})
   }, [])
@@ -31,8 +30,9 @@ export default function FeesClient() {
   function reset() {
     setFeeRate(String(Math.round(fees.serviceRate * 100)))
     setFeePacking(String(fees.packingJpy))
-    setFeeShipping(String(fees.shippingJpy))
-    setFeeSettlement(String(fees.settlementCny))
+    setFeeSettlement(
+      String(Math.round(fees.settlementRate * 100))
+    )
     setMsg('')
   }
 
@@ -41,8 +41,7 @@ export default function FeesClient() {
     const fd = new FormData()
     fd.set('serviceRate', feeRate)
     fd.set('packingJpy', feePacking)
-    fd.set('shippingJpy', feeShipping)
-    fd.set('settlementCny', feeSettlement)
+    fd.set('settlementRate', feeSettlement)
     setBusy(true)
     setMsg('')
     const res = await saveFees(fd)
@@ -88,26 +87,25 @@ export default function FeesClient() {
           />
         </div>
         <div className="field">
-          <label className="label">运费（日元）</label>
+          <label className="label">
+            国际结算手续费（%）
+          </label>
           <input
             className="input"
             type="number"
             min="0"
-            step="1"
-            value={feeShipping}
-            onChange={(e) => setFeeShipping(e.target.value)}
-          />
-        </div>
-        <div className="field">
-          <label className="label">国际结算手续费（人民币）</label>
-          <input
-            className="input"
-            type="number"
-            min="0"
-            step="1"
+            max="100"
+            step="0.1"
             value={feeSettlement}
             onChange={(e) => setFeeSettlement(e.target.value)}
           />
+          <p className="muted">按商品合计的百分比收取</p>
+        </div>
+        <div className="field">
+          <label className="label">运费</label>
+          <p className="muted">
+            运费不固定：下单后由客服确认实际运费，付款时一并收取。
+          </p>
         </div>
         {msg ? <p className="muted">{msg}</p> : null}
         <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>

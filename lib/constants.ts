@@ -36,9 +36,9 @@ export const PHONE_CODES: Array<{ code: string; label: string }> = [
 ]
 
 // 默认费用设置（后台可调整）
+// 运费不固定：由客服确认后告知
 export const DEFAULT_FEES: FeeSettings = {
   serviceRate: 0.1, // 服务费：商品合计的 10%
   packingJpy: 300, // 包装费：300 日元
-  shippingJpy: 500, // 运费：500 日元
-  settlementCny: 100, // 国际结算手续费：100 人民币
+  settlementRate: 0.02, // 国际结算手续费：商品合计的 2%
 }

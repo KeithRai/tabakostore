@@ -24,17 +24,13 @@ export default function CartPage() {
   }, [])
 
   // 费用计算（美元基准 → 双币显示）
+  // 运费不固定：由客服确认后告知
   const goodsTotal = total
   const serviceFee = goodsTotal * fees.serviceRate
   const packingFee = fees.packingJpy / rates.JPY
-  const shippingFee = fees.shippingJpy / rates.JPY
-  const settlementFee = fees.settlementCny / rates.CNY
+  const settlementFee = goodsTotal * fees.settlementRate
   const grandTotal =
-    goodsTotal +
-    serviceFee +
-    packingFee +
-    shippingFee +
-    settlementFee
+    goodsTotal + serviceFee + packingFee + settlementFee
 
   if (items.length === 0) {
     return (
@@ -132,23 +128,29 @@ export default function CartPage() {
         </div>
         <div className="fee-row">
           <span>{t('shippingFee')}</span>
-          <strong>
-            {cny(shippingFee)} / {jpy(shippingFee)}
+          <strong className="muted">
+            {t('shippingConfirmed')}
           </strong>
         </div>
         <div className="fee-row">
-          <span>{t('settlementFee')}</span>
+          <span>
+            {t('settlementFee')}（
+            {Math.round(fees.settlementRate * 100)}%）
+          </span>
           <strong>
             {cny(settlementFee)} / {jpy(settlementFee)}
           </strong>
         </div>
         <div className="fee-row fee-total">
-          <span>{t('total')}:</span>
+          <span>{t('totalExclShipping')}:</span>
           <strong>
             {cny(grandTotal)} / {jpy(grandTotal)}
           </strong>
         </div>
       </div>
+      <p className="muted" style={{ marginTop: 8 }}>
+        {t('shippingNote')}
+      </p>
 
       <div className="cart-actions">
         <Link className="btn btn-primary" href="/checkout">

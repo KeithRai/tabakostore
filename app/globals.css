@@ -1183,6 +1183,14 @@ textarea.input {
   margin-top: 3px;
 }
 
+/* 页脚链接 */
+.footer-links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
 /* 后台订单按日期筛选 */
 .date-filter {
   display: flex;

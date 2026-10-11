@@ -81,19 +81,15 @@ export async function createOrder(
   }
   total = Math.round(total * 100) / 100
 
-  // 计入费用：服务费 + 包装费 + 运费 + 国际结算手续费
+  // 计入费用：服务费 + 包装费 + 国际结算手续费
+  // 运费不固定：由客服确认后告知，付款时一并收取
   const fees = await getFees()
   const rates = await getRates()
   const serviceFeeUsd = total * fees.serviceRate
   const packingFeeUsd = fees.packingJpy / rates.JPY
-  const shippingFeeUsd = fees.shippingJpy / rates.JPY
-  const settlementFeeUsd = fees.settlementCny / rates.CNY
+  const settlementFeeUsd = total * fees.settlementRate
   total = Math.round(
-    (total +
-      serviceFeeUsd +
-      packingFeeUsd +
-      shippingFeeUsd +
-      settlementFeeUsd) *
+    (total + serviceFeeUsd + packingFeeUsd + settlementFeeUsd) *
       100
   ) / 100
 

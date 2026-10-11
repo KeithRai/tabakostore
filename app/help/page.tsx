@@ -2,9 +2,16 @@ import { cookies } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase-service'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
 import { parseInstructions } from '@/lib/instructions'
+import { buildMetadata } from '@/lib/seo'
 import ContactButton from '@/components/contact-button'
 
 // 帮助页：常见问题 + 商家说明
+
+// SEO
+export function generateMetadata() {
+  return buildMetadata('helpTitle')
+}
+
 export default async function HelpPage() {
   const cookieStore = await cookies()
   const rawLang = cookieStore.get('lang')?.value

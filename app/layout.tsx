@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
+import Link from 'next/link'
 import Script from 'next/script'
 import './globals.css'
 import { CartProvider } from '@/components/cart-provider'
@@ -8,7 +9,11 @@ import { CurrencyProvider } from '@/components/currency-provider'
 import Navbar from '@/components/navbar'
 import AgeGate from '@/components/age-gate'
 import BackToTop from '@/components/back-to-top'
-import { LANG_LIST, type Lang } from '@/lib/i18n'
+import {
+  getDictionary,
+  LANG_LIST,
+  type Lang,
+} from '@/lib/i18n'
 
 export const metadata: Metadata = {
   title: 'TabakoStore - Online Toy Shop',
@@ -26,6 +31,7 @@ export default async function RootLayout({
   const lang: Lang = LANG_LIST.includes(rawLang as Lang)
     ? (rawLang as Lang)
     : 'en'
+  const dict = getDictionary(lang)
 
   // Tidio 客服聊天代码（在 Vercel 环境变量 TIDIO_SCRIPT 中粘贴）
   const tidio = process.env.TIDIO_SCRIPT ?? ''
@@ -49,7 +55,16 @@ export default async function RootLayout({
               <Navbar />
               <main className="container">{children}</main>
               <footer className="footer">
-                © {new Date().getFullYear()} TabakoStore
+                <div className="footer-links">
+                  <Link href="/privacy">
+                    {dict.privacyTitle}
+                  </Link>
+                  <Link href="/returns">
+                    {dict.returnsTitle}
+                  </Link>
+                  <Link href="/help">{dict.helpTitle}</Link>
+                </div>
+                <div>© {new Date().getFullYear()} TabakoStore</div>
               </footer>
               <AgeGate />
               <BackToTop />

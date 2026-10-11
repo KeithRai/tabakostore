@@ -10,9 +10,12 @@ export const DEFAULT_RATES: Rates = { CNY: 7.2, JPY: 155 }
 const RATES_API = 'https://open.er-api.com/v6/latest/USD'
 
 // 服务端获取实时汇率（失败时返回默认汇率）
+// 每 24 小时更新一次（每日锁定汇率）
 export async function getRates(): Promise<Rates> {
   try {
-    const res = await fetch(RATES_API, { next: { revalidate: 3600 } })
+    const res = await fetch(RATES_API, {
+      next: { revalidate: 24 * 3600 },
+    })
     if (!res.ok) return { ...DEFAULT_RATES }
     const data = await res.json()
     const cny = data?.rates?.CNY

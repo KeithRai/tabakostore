@@ -193,6 +193,62 @@ const en = {
   pastOrders: 'Past orders',
   viewAll: 'View all',
   recommended: 'Recommended',
+  // 费用（客服确认运费）
+  shippingConfirmed: 'Confirmed by service',
+  shippingNote:
+    'Shipping fee is confirmed by our customer service and collected with payment.',
+  totalExclShipping: 'Total (excl. shipping)',
+  // 订单
+  orderDetails: 'Order Details',
+  orderDate: 'Order date',
+  viewOrder: 'View details',
+  pendingExpireNote:
+    'Pending orders are automatically cancelled after 24 hours without payment.',
+  // SEO
+  seoDescription:
+    'TabakoStore - fun toys shipped worldwide. Pay by WeChat Pay / Alipay.',
+  // 隐私政策
+  privacyTitle: 'Privacy Policy',
+  privacyIntro:
+    'TabakoStore respects your privacy. This policy explains how we collect, use, and protect your information.',
+  privacyCollectTitle: 'Information we collect',
+  privacyCollect:
+    'Email, nickname, avatar, gender, birthday, shipping address, phone number, and order information.',
+  privacyUseTitle: 'How we use it',
+  privacyUse:
+    'To process orders, contact you, and improve our services.',
+  privacyShareTitle: 'Sharing',
+  privacyShare:
+    'We never sell your information. We only share it when necessary (e.g., with shipping providers).',
+  privacyCookiesTitle: 'Cookies',
+  privacyCookies:
+    'We use cookies to save your language preference and cart contents.',
+  privacyChildrenTitle: 'Children',
+  privacyChildren: 'This store is intended for users aged 18 and older.',
+  privacyContactTitle: 'Contact us',
+  privacyContact:
+    'For privacy questions, please contact us via the customer service chat.',
+  // 退换货政策
+  returnsTitle: 'Returns & Exchanges',
+  returnsIntro:
+    'We want you to love your purchase. Please see our return and exchange policy below.',
+  returnsPeriodTitle: 'Return period',
+  returnsPeriod:
+    'Returns and exchanges are accepted within 14 days of delivery.',
+  returnsConditionTitle: 'Conditions',
+  returnsCondition:
+    'Items must be unused, in original packaging, with all accessories included.',
+  returnsNotAllowedTitle: 'Not eligible',
+  returnsNotAllowed:
+    'Customized items and used items are not eligible for return or exchange.',
+  returnsProcessTitle: 'How to request',
+  returnsProcess:
+    'Contact our customer service with your order number and photos of the item. We will arrange the return after confirmation.',
+  returnsRefundTitle: 'Refunds',
+  returnsRefund: 'Refunds are issued to the original payment method.',
+  returnsShippingTitle: 'Shipping cost',
+  returnsShipping:
+    'Return shipping is paid by the buyer, except for quality issues.',
 }
 
 export type Dict = typeof en
@@ -357,6 +413,52 @@ const zh: Dict = {
   pastOrders: '过往订单',
   viewAll: '查看全部',
   recommended: '推荐商品',
+  // 费用（客服确认运费）
+  shippingConfirmed: '客服确认',
+  shippingNote: '运费由客服确认后告知，付款时一并收取。',
+  totalExclShipping: '合计（不含运费）',
+  // 订单
+  orderDetails: '订单详情',
+  orderDate: '下单时间',
+  viewOrder: '查看详情',
+  pendingExpireNote: '待支付订单超过 24 小时未付款将自动取消。',
+  // SEO
+  seoDescription: 'TabakoStore - 好玩玩具，运送全球。支持微信支付 / 支付宝。',
+  // 隐私政策
+  privacyTitle: '隐私政策',
+  privacyIntro:
+    'TabakoStore 重视您的隐私。本政策说明我们如何收集、使用和保护您的信息。',
+  privacyCollectTitle: '我们收集的信息',
+  privacyCollect:
+    '邮箱、昵称、头像、性别、生日、收货地址、电话号码和订单信息。',
+  privacyUseTitle: '我们如何使用',
+  privacyUse: '用于处理订单、联系您和改进服务。',
+  privacyShareTitle: '信息共享',
+  privacyShare:
+    '我们不会出售您的信息，仅在必要时（如物流配送）与服务商共享。',
+  privacyCookiesTitle: 'Cookie',
+  privacyCookies: '我们使用 cookie 保存您的语言偏好和购物车内容。',
+  privacyChildrenTitle: '未成年人',
+  privacyChildren: '本店仅面向 18 岁及以上用户。',
+  privacyContactTitle: '联系我们',
+  privacyContact: '隐私问题请通过客服聊天联系我们。',
+  // 退换货政策
+  returnsTitle: '退换货政策',
+  returnsIntro:
+    '我们希望您满意购物体验，请查看以下退换货政策。',
+  returnsPeriodTitle: '退换期限',
+  returnsPeriod: '自收货之日起 14 天内可申请退换。',
+  returnsConditionTitle: '退换条件',
+  returnsCondition: '商品需未使用、包装完好、配件齐全。',
+  returnsNotAllowedTitle: '不支持退换',
+  returnsNotAllowed: '定制商品和已使用的商品不支持退换。',
+  returnsProcessTitle: '申请流程',
+  returnsProcess:
+    '通过客服聊天提供订单号和商品照片，客服确认后安排退货。',
+  returnsRefundTitle: '退款',
+  returnsRefund: '退款按原支付方式退回。',
+  returnsShippingTitle: '运费',
+  returnsShipping: '退货运费由买家承担，质量问题除外。',
 }
 
 const zhTW: Dict = {
@@ -522,6 +624,51 @@ const zhTW: Dict = {
   pastOrders: '過往訂單',
   viewAll: '查看全部',
   recommended: '推薦商品',
+  // 費用（客服確認運費）
+  shippingConfirmed: '客服確認',
+  shippingNote: '運費由客服確認後告知，付款時一併收取。',
+  totalExclShipping: '合計（不含運費）',
+  // 訂單
+  orderDetails: '訂單詳情',
+  orderDate: '下單時間',
+  viewOrder: '查看詳情',
+  pendingExpireNote: '待支付訂單超過 24 小時未付款將自動取消。',
+  // SEO
+  seoDescription: 'TabakoStore - 好玩玩具，運送全球。支援微信支付 / 支付寶。',
+  // 隱私政策
+  privacyTitle: '隱私政策',
+  privacyIntro:
+    'TabakoStore 重視您的隱私。本政策說明我們如何收集、使用和保護您的資訊。',
+  privacyCollectTitle: '我們收集的資訊',
+  privacyCollect:
+    '郵箱、暱稱、頭像、性別、生日、收貨地址、電話號碼和訂單資訊。',
+  privacyUseTitle: '我們如何使用',
+  privacyUse: '用於處理訂單、聯絡您和改进服務。',
+  privacyShareTitle: '資訊共享',
+  privacyShare:
+    '我們不會出售您的資訊，僅在必要時（如物流配送）與服務商共享。',
+  privacyCookiesTitle: 'Cookie',
+  privacyCookies: '我們使用 cookie 儲存您的語言偏好和購物車內容。',
+  privacyChildrenTitle: '未成年人',
+  privacyChildren: '本店僅面向 18 歲及以上用戶。',
+  privacyContactTitle: '聯絡我們',
+  privacyContact: '隱私問題請透過客服聊天聯絡我們。',
+  // 退換貨政策
+  returnsTitle: '退換貨政策',
+  returnsIntro: '我們希望您滿意購物體驗，請查看以下退換貨政策。',
+  returnsPeriodTitle: '退換期限',
+  returnsPeriod: '自收貨之日起 14 天內可申請退換。',
+  returnsConditionTitle: '退換條件',
+  returnsCondition: '商品需未使用、包裝完好、配件齊全。',
+  returnsNotAllowedTitle: '不支持退換',
+  returnsNotAllowed: '客製化商品和已使用的商品不支持退換。',
+  returnsProcessTitle: '申請流程',
+  returnsProcess:
+    '透過客服聊天提供訂單編號和商品照片，客服確認後安排退貨。',
+  returnsRefundTitle: '退款',
+  returnsRefund: '退款按原支付方式退回。',
+  returnsShippingTitle: '運費',
+  returnsShipping: '退貨運費由買家承擔，質量問題除外。',
 }
 
 const ja: Dict = {
@@ -690,6 +837,60 @@ const ja: Dict = {
   pastOrders: '過去の注文',
   viewAll: 'すべて見る',
   recommended: 'おすすめ商品',
+  // 費用（サポートが送料確認）
+  shippingConfirmed: 'サポート確認',
+  shippingNote:
+    '送料はカスタマーサポートが確認後お知らせし、支払い時に一緒にお支払いください。',
+  totalExclShipping: '合計（送料別）',
+  // 注文
+  orderDetails: '注文詳細',
+  orderDate: '注文日時',
+  viewOrder: '詳細を見る',
+  pendingExpireNote:
+    '入金待ちの注文は24時間以内に入金がない場合、自動キャンセルされます。',
+  // SEO
+  seoDescription:
+    'TabakoStore - おもちゃを世界中へお届け。WeChat支付・支付宝に対応。',
+  // プライバシーポリシー
+  privacyTitle: 'プライバシーポリシー',
+  privacyIntro:
+    'TabakoStoreはお客様のプライバシーを尊重します。本ポリシーは情報の収集・利用・保護方法を説明します。',
+  privacyCollectTitle: '収集する情報',
+  privacyCollect:
+    'メールアドレス、ニックネーム、アバター、性別、誕生日、配送先住所、電話番号、注文情報。',
+  privacyUseTitle: '利用目的',
+  privacyUse: '注文処理、お客様への連絡、サービスの改善のため。',
+  privacyShareTitle: '情報の共有',
+  privacyShare:
+    'お客様の情報を販売することはありません。必要時（配送業者など）のみ共有します。',
+  privacyCookiesTitle: 'Cookie',
+  privacyCookies:
+    'Cookieは言語設定とカート内容の保存に使用します。',
+  privacyChildrenTitle: '未成年者',
+  privacyChildren: '本ストアは18歳以上の方を対象としています。',
+  privacyContactTitle: 'お問い合わせ',
+  privacyContact:
+    'プライバシーに関するご質問はカスタマーサポートチャットからお願いします。',
+  // 返品・交換ポリシー
+  returnsTitle: '返品・交換ポリシー',
+  returnsIntro:
+    'ご購入にご満足いただけるよう努めています。以下の返品・交換ポリシーをご確認ください。',
+  returnsPeriodTitle: '返品期間',
+  returnsPeriod: 'お届けから14日以内に返品・交換をお受け付けます。',
+  returnsConditionTitle: '条件',
+  returnsCondition:
+    '商品は未使用・元の梱包・付属品付きである必要があります。',
+  returnsNotAllowedTitle: '対象外',
+  returnsNotAllowed:
+    'カスタム品および使用済み商品は返品・交換の対象外です。',
+  returnsProcessTitle: '申請方法',
+  returnsProcess:
+    'カスタマーサポートに注文番号と商品写真を送信してください。確認後、返品を手配します。',
+  returnsRefundTitle: '返金',
+  returnsRefund: '返金は元の支払い方法に戻ります。',
+  returnsShippingTitle: '送料',
+  returnsShipping:
+    '返品送料はご購入者負担です（品質問題の場合は当店負担）。',
 }
 
 export function getDictionary(lang: Lang): Dict {

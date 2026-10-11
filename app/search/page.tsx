@@ -1,11 +1,17 @@
 import { cookies } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase-service'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
+import { buildMetadata } from '@/lib/seo'
 import ProductCard from '@/components/product-card'
 import type { Product } from '@/lib/types'
 
 // 搜索页：按名称/描述搜索商品，搜索栏下方显示推荐商品
 export const dynamic = 'force-dynamic'
+
+// SEO
+export function generateMetadata() {
+  return buildMetadata('search')
+}
 
 export default async function SearchPage({
   searchParams,

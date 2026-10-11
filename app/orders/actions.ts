@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase-server'
 import { createServiceClient } from '@/lib/supabase-service'
+import { restoreOrderStock } from '@/lib/order-utils'
 
 // 用户取消订单（仅限待支付订单），取消后同步到管理后台
 export async function cancelOrder(orderId: string) {
@@ -41,27 +42,7 @@ export async function cancelOrder(orderId: string) {
   }
 
   // 恢复商品库存
-  const { data: items } = await db
-    .from('order_items')
-    .select('product_id, quantity')
-    .eq('order_id', orderId)
-  for (const item of items ?? []) {
-    if (!item.product_id) continue
-    const { data: prod } = await db
-      .from('products')
-      .select('stock')
-      .eq('id', item.product_id)
-      .single()
-    if (prod) {
-      await db
-        .from('products')
-        .update({
-          stock: prod.stock + item.quantity,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', item.product_id)
-    }
-  }
+  await restoreOrderStock(db, orderId)
 
   revalidatePath('/orders', 'page')
   revalidatePath('/admin/orders')

@@ -1,10 +1,16 @@
 import { cookies } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase-service'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
+import { buildMetadata } from '@/lib/seo'
 import type { News } from '@/lib/types'
 
 // 新闻页：显示后台发布的新闻
 export const dynamic = 'force-dynamic'
+
+// SEO
+export function generateMetadata() {
+  return buildMetadata('newsTitle')
+}
 
 export default async function NewsPage() {
   const cookieStore = await cookies()

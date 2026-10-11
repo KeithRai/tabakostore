@@ -2,11 +2,17 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase-service'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
+import { buildMetadata } from '@/lib/seo'
 import ProductCard from '@/components/product-card'
 import type { Product } from '@/lib/types'
 
 // 种类页：按分类筛选商品
 export const dynamic = 'force-dynamic'
+
+// SEO
+export function generateMetadata() {
+  return buildMetadata('categoriesTitle')
+}
 
 export default async function CategoriesPage({
   searchParams,
