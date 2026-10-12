@@ -140,6 +140,27 @@ export async function deleteProduct(id: string) {
   return { success: true }
 }
 
+// 快速调整库存（商品列表 ＋/－ 按钮）
+export async function adjustStock(id: string, delta: number) {
+  await requireAdmin()
+  const db = createServiceClient()
+  const { data } = await db
+    .from('products')
+    .select('stock')
+    .eq('id', id)
+    .single()
+  if (!data) return { error: '商品不存在' }
+  const next = Math.max(0, (data.stock ?? 0) + delta)
+  const { error } = await db
+    .from('products')
+    .update({ stock: next, updated_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) return { error: '更新失败：' + error.message }
+  revalidatePath('/admin/products')
+  revalidatePath('/')
+  return { success: true, stock: next }
+}
+
 export async function updateOrderStatus(id: string, status: string) {
   await requireAdmin()
   const db = createServiceClient()

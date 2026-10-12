@@ -80,6 +80,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 name: product.name,
                 price,
                 image_url: cover,
+                stock: product.stock,
               })
             }}
           >

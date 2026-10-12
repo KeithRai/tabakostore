@@ -1293,6 +1293,47 @@ textarea.input {
   margin: 16px 0;
 }
 
+/* 后台订单筛选栏（状态按钮 + 日期下拉） */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 16px 0;
+}
+.filter-btn {
+  position: relative;
+}
+/* 待支付/待发货 按钮右上角的未处理数量角标 */
+.filter-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+}
+.date-select {
+  max-width: 200px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+/* 后台商品列表：库存快捷加减按钮 */
+.stock-btn {
+  min-width: 32px;
+  padding: 4px 8px;
+  font-weight: 700;
+}
+
 /* 费用明细 */
 .fee-list {
   display: flex;

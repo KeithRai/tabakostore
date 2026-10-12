@@ -3,7 +3,7 @@
 import { FormEvent, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { upsertProduct, deleteProduct } from '../actions'
+import { upsertProduct, deleteProduct, adjustStock } from '../actions'
 import { useLang } from '@/components/lang-provider'
 import { useCurrency } from '@/components/currency-provider'
 import type { Product } from '@/lib/types'
@@ -92,6 +92,17 @@ export default function ProductsClient({
       setMsg('✅ 已删除')
       router.refresh()
     }
+  }
+
+  // 快捷调整库存（＋1 / －1）
+  async function onStock(p: Product, delta: number) {
+    const res = await adjustStock(p.id, delta)
+    if (res?.error) {
+      setMsg('❌ ' + res.error)
+      return
+    }
+    setMsg(`✅ ${p.name} 库存：${res.stock}`)
+    router.refresh()
   }
 
   return (
@@ -270,6 +281,23 @@ export default function ProductsClient({
                       {p.category ? ` · ${p.category}` : ''}
                     </div>
                   </div>
+                  <button
+                    className="btn btn-outline btn-sm stock-btn"
+                    title="库存 +1"
+                    aria-label="库存加一"
+                    onClick={() => onStock(p, 1)}
+                  >
+                    ＋
+                  </button>
+                  <button
+                    className="btn btn-outline btn-sm stock-btn"
+                    title="库存 -1"
+                    aria-label="库存减一"
+                    disabled={p.stock <= 0}
+                    onClick={() => onStock(p, -1)}
+                  >
+                    －
+                  </button>
                   <button
                     className="btn btn-outline btn-sm"
                     onClick={() => startEdit(p)}

@@ -42,7 +42,13 @@ export default function AddToCartButton({ product }: { product: Product }) {
             return
           }
           add(
-            { id: product.id, name: product.name, price, image_url: product.image_url },
+            {
+              id: product.id,
+              name: product.name,
+              price,
+              image_url: product.image_url,
+              stock: product.stock,
+            },
             qty
           )
           setAdded(true)

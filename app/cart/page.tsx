@@ -12,7 +12,7 @@ import { DEFAULT_FEES, MAX_ORDER } from '@/lib/constants'
 import type { FeeSettings } from '@/lib/types'
 
 export default function CartPage() {
-  const { items, setQty, remove, total } = useCart()
+  const { items, setQty, remove, total, updateStocks } = useCart()
   const { t } = useLang()
   const { cny, jpy, rates } = useCurrency()
   const [fees, setFees] = useState<FeeSettings>(DEFAULT_FEES)
@@ -26,12 +26,15 @@ export default function CartPage() {
       .catch(() => {})
   }, [])
 
-  // 读取商品库存
+  // 读取商品实时库存，并同步到购物车（超过库存的数量自动下调）
   useEffect(() => {
     getProductStocks()
-      .then(setStocks)
+      .then((map) => {
+        setStocks(map)
+        updateStocks(map)
+      })
       .catch(() => {})
-  }, [])
+  }, [updateStocks])
 
   // 费用计算（美元基准 → 双币显示）
   // 运费不固定：由客服确认后告知

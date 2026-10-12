@@ -17,6 +17,7 @@ export type CartItem = {
   price: number
   image_url: string | null
   qty: number
+  stock?: number // 加入购物车时的库存（数量上限，不能超过库存）
 }
 
 export type OrderItem = {
