@@ -7,6 +7,7 @@ import { createServiceClient } from '@/lib/supabase-service'
 import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
 import { getRates, formatCNY, formatJPY } from '@/lib/currency'
 import { sendOrderConfirmationEmail } from '@/lib/email'
+import { decrementStock, incrementStock } from '@/lib/order-utils'
 import { getFees } from '@/app/admin/actions'
 import type { CartItem, CheckoutInfo } from '@/lib/types'
 
@@ -82,6 +83,27 @@ export async function createOrder(
   }
   total = Math.round(total * 100) / 100
 
+  // ===== 并发安全：原子扣减库存 =====
+  // 数据库行级锁保证同时下单只有一个成功，不会超卖
+  // 流程：先扣库存 → 再创建订单；任何一步失败都会回滚已扣的库存
+  const deducted: Array<{ product_id: string; quantity: number }> = []
+  for (const item of lineItems) {
+    const left = await decrementStock(db, item.product_id, item.qty)
+    if (left < 0) {
+      // 库存不足（已被其他客户抢先购买）：回滚本次已扣减的库存
+      for (const d of deducted) {
+        await incrementStock(db, d.product_id, d.quantity)
+      }
+      return {
+        error: `库存不足："${item.product_name}" 刚刚被其他客户抢先购买，请调整购物车后重试。`,
+      }
+    }
+    deducted.push({
+      product_id: item.product_id,
+      quantity: item.qty,
+    })
+  }
+
   // 计入费用：服务费 + 包装费 + 国际结算手续费
   // 运费不固定：由客服确认后告知，付款时一并收取
   const fees = await getFees()
@@ -116,6 +138,10 @@ export async function createOrder(
     .select('id')
     .single()
   if (orderError || !orderData) {
+    // 创建订单失败：回滚库存
+    for (const d of deducted) {
+      await incrementStock(db, d.product_id, d.quantity)
+    }
     return { error: 'Failed to create order, please try again.' }
   }
 
@@ -130,18 +156,12 @@ export async function createOrder(
     }))
   )
   if (itemsError) {
-    return { error: 'Failed to create order, please try again.' }
-  }
-
-  // 扣减库存
-  for (const item of items) {
-    const p = productMap.get(item.id)
-    if (p) {
-      await db
-        .from('products')
-        .update({ stock: Math.max(0, p.stock - item.qty), updated_at: new Date().toISOString() })
-        .eq('id', item.id)
+    // 明细写入失败：回滚库存并删除空订单
+    for (const d of deducted) {
+      await incrementStock(db, d.product_id, d.quantity)
     }
+    await db.from('orders').delete().eq('id', orderData.id)
+    return { error: 'Failed to create order, please try again.' }
   }
 
   revalidatePath('/admin/orders')
