@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from 'react'
 import { updateInstructions } from '../actions'
+import { useLang } from '@/components/lang-provider'
 
 // 后台帮助信息编辑（内容显示在"帮助"页面）
 // 编辑栏含标题；下方展示当前已保存的内容，并可编辑/删除
@@ -12,6 +13,7 @@ export default function InstructionsClient({
   initialTitle: string
   initialContent: string
 }) {
+  const { t } = useLang()
   // 编辑栏
   const [title, setTitle] = useState(initialTitle)
   const [content, setContent] = useState(initialContent)
@@ -35,7 +37,7 @@ export default function InstructionsClient({
     if (res?.error) {
       setMsg('❌ ' + res.error)
     } else {
-      setMsg('✅ 保存成功')
+      setMsg('✅ ' + t('admSaved'))
       setSaved({ title, body: content })
     }
   }
@@ -50,7 +52,7 @@ export default function InstructionsClient({
 
   // 删除当前展示内容
   async function onDeleteSaved() {
-    if (!confirm('确定删除当前展示的帮助信息吗？')) return
+    if (!confirm(t('admDeleteInstructionsConfirm'))) return
     const fd = new FormData()
     fd.set('title', '')
     fd.set('content', '')
@@ -61,7 +63,7 @@ export default function InstructionsClient({
     if (res?.error) {
       setMsg('❌ ' + res.error)
     } else {
-      setMsg('✅ 已删除')
+      setMsg('✅ ' + t('admDeletedMsg'))
       setSaved({ title: '', body: '' })
       setTitle('')
       setContent('')
@@ -70,24 +72,22 @@ export default function InstructionsClient({
 
   return (
     <div>
-      <h1>帮助信息编辑</h1>
-      <p className="muted">
-        在这里编辑展示在"帮助"页面的说明内容。
-      </p>
+      <h1>{t('admInstructions')}</h1>
+      <p className="muted">{t('admInstructionsDesc')}</p>
 
       {/* 编辑栏（含标题） */}
       <form className="form" onSubmit={onSubmit}>
         <div className="field">
-          <label className="label">标题</label>
+          <label className="label">{t('admInstructionsTitle')}</label>
           <input
             className="input"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="例如：付款与发货说明"
+            placeholder={t('admInstructionsPlaceholder')}
           />
         </div>
         <div className="field">
-          <label className="label">说明内容</label>
+          <label className="label">{t('admInstructionsBody')}</label>
           <textarea
             className="input"
             rows={10}
@@ -102,7 +102,7 @@ export default function InstructionsClient({
             type="submit"
             disabled={busy}
           >
-            {busy ? '保存中…' : '保存'}
+            {busy ? t('admSaving') : t('save')}
           </button>
           <button
             className="btn btn-outline"
@@ -113,13 +113,13 @@ export default function InstructionsClient({
               setMsg('')
             }}
           >
-            取消
+            {t('cancel')}
           </button>
         </div>
       </form>
 
       {/* 当前帮助页展示内容（在说明栏下方） */}
-      <h2 style={{ marginTop: 24 }}>当前帮助页展示内容</h2>
+      <h2 style={{ marginTop: 24 }}>{t('admCurrentDisplay')}</h2>
       <div className="admin-panel">
         {saved.title ? (
           <h3 style={{ marginTop: 0 }}>{saved.title}</h3>
@@ -127,20 +127,20 @@ export default function InstructionsClient({
         {saved.body ? (
           <p style={{ whiteSpace: 'pre-wrap' }}>{saved.body}</p>
         ) : (
-          <p className="muted">暂无展示内容</p>
+          <p className="muted">{t('admNoDisplayContent')}</p>
         )}
         <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
           <button
             className="btn btn-outline btn-sm"
             onClick={onEditSaved}
           >
-            编辑
+            {t('edit')}
           </button>
           <button
             className="btn btn-danger btn-sm"
             onClick={onDeleteSaved}
           >
-            删除
+            {t('delete')}
           </button>
         </div>
       </div>

@@ -3,7 +3,11 @@
 import { FormEvent, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { upsertProduct, deleteProduct, adjustStock } from '../actions'
+import {
+  upsertProduct,
+  deleteProduct,
+  setStock as saveStockValue,
+} from '../actions'
 import { useLang } from '@/components/lang-provider'
 import { useCurrency } from '@/components/currency-provider'
 import type { Product } from '@/lib/types'
@@ -77,38 +81,64 @@ export default function ProductsClient({
     if (res?.error) {
       setMsg('❌ ' + res.error)
     } else {
-      setMsg('✅ 保存成功')
+      setMsg('✅ ' + t('admSaved'))
       resetForm()
       router.refresh()
     }
   }
 
   async function onDelete(id: string) {
-    if (!confirm('确定删除这个商品吗？')) return
+    if (!confirm(t('admDeleteProductConfirm'))) return
     const res = await deleteProduct(id)
     if (res?.error) {
       setMsg('❌ ' + res.error)
     } else {
-      setMsg('✅ 已删除')
+      setMsg('✅ ' + t('admDeletedMsg'))
       router.refresh()
     }
   }
 
-  // 快捷调整库存（＋1 / －1）
-  async function onStock(p: Product, delta: number) {
-    const res = await adjustStock(p.id, delta)
+  // 快捷调整库存（输入件数 + 确定后才真正生效）
+  const [stockEdits, setStockEdits] = useState<Record<string, string>>({})
+
+  function stockValueOf(p: Product): string {
+    const v = stockEdits[p.id]
+    return v !== undefined ? v : String(p.stock)
+  }
+
+  function bumpStock(p: Product, delta: number) {
+    const current = parseInt(stockValueOf(p), 10)
+    const base = isNaN(current) ? p.stock : current
+    const next = Math.max(0, base + delta)
+    setStockEdits((prev) => ({ ...prev, [p.id]: String(next) }))
+  }
+
+  async function applyStock(p: Product) {
+    const value = parseInt(stockValueOf(p), 10)
+    if (isNaN(value)) {
+      setMsg('❌ ' + t('admStock'))
+      return
+    }
+    const res = await saveStockValue(p.id, value)
     if (res?.error) {
       setMsg('❌ ' + res.error)
       return
     }
-    setMsg(`✅ ${p.name} 库存：${res.stock}`)
+    setMsg(
+      `✅ ${p.name} · ${t('admStockSet', { n: res.stock ?? value })}`
+    )
+    setStockEdits((prev) => {
+      const next = { ...prev }
+      delete next[p.id]
+      return next
+    })
     router.refresh()
   }
 
   return (
     <div>
       <div className="admin-bar">
-        <h1>商品管理</h1>
+        <h1>{t('admProductMgmt')}</h1>
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             type="button"
@@ -118,7 +148,7 @@ export default function ProductsClient({
               setView('form')
             }}
           >
-            ＋ 新增商品
+            {t('admAddProduct')}
           </button>
           <button
             type="button"
@@ -133,7 +163,7 @@ export default function ProductsClient({
             className="btn btn-outline btn-sm"
             onClick={() => router.push('/admin/fees')}
           >
-            费用设置
+            {t('admFees')}
           </button>
         </div>
       </div>
@@ -142,19 +172,19 @@ export default function ProductsClient({
       {view === 'form' && (
         <form className="admin-panel" onSubmit={onSubmit}>
           <h2 style={{ marginTop: 0 }}>
-            {editingId ? '调整商品' : '新增商品'}
+            {editingId ? t('admEditProduct') : t('admAddProduct')}
           </h2>
           <div className="field">
-            <label className="label">商品名称 *</label>
+            <label className="label">{t('admProductName')} *</label>
             <input
               className="input"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="例如：Building Blocks Set"
+              placeholder="Building Blocks Set"
             />
           </div>
           <div className="field">
-            <label className="label">描述</label>
+            <label className="label">{t('admDescription')}</label>
             <textarea
               className="input"
               rows={3}
@@ -163,7 +193,7 @@ export default function ProductsClient({
             />
           </div>
           <div className="field">
-            <label className="label">价格（人民币）*</label>
+            <label className="label">{t('admPriceCny')} *</label>
             <input
               className="input"
               type="number"
@@ -171,7 +201,7 @@ export default function ProductsClient({
               step="0.01"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              placeholder="例如：175.00"
+              placeholder="175.00"
             />
             {/* 汇率换算提示（日元） */}
             {price ? (
@@ -181,7 +211,7 @@ export default function ProductsClient({
             ) : null}
           </div>
           <div className="field">
-            <label className="label">库存数量 *</label>
+            <label className="label">{t('admStock')} *</label>
             <input
               className="input"
               type="number"
@@ -189,7 +219,7 @@ export default function ProductsClient({
               step="1"
               value={stock}
               onChange={(e) => setStock(e.target.value)}
-              placeholder="例如：50"
+              placeholder="50"
             />
           </div>
           <div className="field">
@@ -198,11 +228,10 @@ export default function ProductsClient({
               className="input"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="例如：积木 / 玩偶 / 遥控车"
             />
           </div>
           <div className="field">
-            <label className="label">{t('images')}</label>
+            <label className="label">{t('admProductImages')}</label>
             <input
               className="file-input"
               type="file"
@@ -210,9 +239,11 @@ export default function ProductsClient({
               multiple
               onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
             />
-            <p className="muted">{t('uploadMultiple')}</p>
+            <p className="muted">{t('admUploadMultiple')}</p>
             {files.length > 0 ? (
-              <p className="muted">已选择 {files.length} 张新图片</p>
+              <p className="muted">
+                {t('admSelectedNewImages', { n: files.length })}
+              </p>
             ) : null}
             {existingImages.length > 0 && files.length === 0 ? (
               <div>
@@ -223,21 +254,21 @@ export default function ProductsClient({
                     </div>
                   ))}
                 </div>
-                <p className="muted">当前图片（不选新图片则保留）</p>
+                <p className="muted">{t('admKeepCurrentImages')}</p>
               </div>
             ) : null}
           </div>
           {msg ? <p className="muted">{msg}</p> : null}
           <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
             <button className="btn btn-primary" type="submit">
-              保存
+              {t('save')}
             </button>
             <button
               className="btn btn-outline"
               type="button"
               onClick={resetForm}
             >
-              取消
+              {t('cancel')}
             </button>
           </div>
         </form>
@@ -277,38 +308,61 @@ export default function ProductsClient({
                     <div style={{ fontWeight: 600 }}>{p.name}</div>
                     <div className="muted">
                       {cny(parseFloat(p.price))} /{' '}
-                      {jpy(parseFloat(p.price))} · 库存 {p.stock}
+                      {jpy(parseFloat(p.price))} · {t('admStock')}{' '}
+                      {p.stock}
                       {p.category ? ` · ${p.category}` : ''}
                     </div>
                   </div>
-                  <button
-                    className="btn btn-outline btn-sm stock-btn"
-                    title="库存 +1"
-                    aria-label="库存加一"
-                    onClick={() => onStock(p, 1)}
-                  >
-                    ＋
-                  </button>
-                  <button
-                    className="btn btn-outline btn-sm stock-btn"
-                    title="库存 -1"
-                    aria-label="库存减一"
-                    disabled={p.stock <= 0}
-                    onClick={() => onStock(p, -1)}
-                  >
-                    －
-                  </button>
+                  {/* 库存快捷调整：－ [件数] ＋ [确定]（点确定后才生效） */}
+                  <div className="stock-editor">
+                    <button
+                      className="btn btn-outline btn-sm stock-btn"
+                      title={t('admStockMinus')}
+                      aria-label={t('admStockMinus')}
+                      onClick={() => bumpStock(p, -1)}
+                    >
+                      －
+                    </button>
+                    <input
+                      className="input stock-input"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={stockValueOf(p)}
+                      onChange={(e) =>
+                        setStockEdits((prev) => ({
+                          ...prev,
+                          [p.id]: e.target.value,
+                        }))
+                      }
+                    />
+                    <button
+                      className="btn btn-outline btn-sm stock-btn"
+                      title={t('admStockPlus')}
+                      aria-label={t('admStockPlus')}
+                      onClick={() => bumpStock(p, 1)}
+                    >
+                      ＋
+                    </button>
+                    <button
+                      className="btn btn-primary btn-sm"
+                      disabled={stockValueOf(p) === String(p.stock)}
+                      onClick={() => applyStock(p)}
+                    >
+                      {t('admConfirm')}
+                    </button>
+                  </div>
                   <button
                     className="btn btn-outline btn-sm"
                     onClick={() => startEdit(p)}
                   >
-                    编辑
+                    {t('edit')}
                   </button>
                   <button
                     className="btn btn-danger btn-sm"
                     onClick={() => onDelete(p.id)}
                   >
-                    删除
+                    {t('delete')}
                   </button>
                 </div>
               )

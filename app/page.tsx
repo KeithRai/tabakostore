@@ -6,6 +6,7 @@ import { PAGE_SIZE } from '@/lib/constants'
 import { cleanupExpiredOrders } from '@/lib/order-utils'
 import { buildMetadata } from '@/lib/seo'
 import ProductCard from '@/components/product-card'
+import WelcomeMarker from '@/components/welcome-marker'
 import type { Product } from '@/lib/types'
 
 // 主页：分页显示商品，每页最多 20 件
@@ -34,6 +35,9 @@ export default async function HomePage({
   // 清理超过 24 小时未付款的待支付订单
   await cleanupExpiredOrders()
 
+  // 欢迎语只在第一次访问时显示
+  const firstVisit = !cookieStore.get('welcomed')?.value
+
   const db = createServiceClient()
 
   // 商品总数
@@ -54,10 +58,15 @@ export default async function HomePage({
 
   return (
     <div>
-      <h1>{tr(dict, 'welcomeTitle')}</h1>
-      <p className="muted" style={{ marginBottom: 20 }}>
-        {tr(dict, 'welcomeSub')}
-      </p>
+      {firstVisit ? (
+        <>
+          <h1>{tr(dict, 'welcomeTitle')}</h1>
+          <p className="muted" style={{ marginBottom: 20 }}>
+            {tr(dict, 'welcomeSub')}
+          </p>
+        </>
+      ) : null}
+      {firstVisit ? <WelcomeMarker /> : null}
       {products.length === 0 ? (
         <div className="empty">
           <p>{tr(dict, 'noProducts')}</p>

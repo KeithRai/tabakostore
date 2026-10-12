@@ -164,11 +164,34 @@ export async function adjustStock(id: string, delta: number) {
 export async function updateOrderStatus(id: string, status: string) {
   await requireAdmin()
   const db = createServiceClient()
-  const { error } = await db.from('orders').update({ status }).eq('id', id)
+  // 标记为已发货时记录发货时间（用于 14 天自动确认收货）
+  const patch: Record<string, unknown> = { status }
+  if (status === 'shipped') {
+    patch.shipped_at = new Date().toISOString()
+  }
+  const { error } = await db.from('orders').update(patch).eq('id', id)
   if (error) return { error: '更新失败：' + error.message }
   revalidatePath('/admin/orders')
   revalidatePath('/orders', 'page')
   return { success: true }
+}
+
+// 设置库存（后台商品列表 输入件数 + 确定）
+export async function setStock(id: string, stock: number) {
+  await requireAdmin()
+  const value = Math.max(0, Math.floor(Number(stock)))
+  if (isNaN(value)) {
+    return { error: '库存必须是数字' }
+  }
+  const db = createServiceClient()
+  const { error } = await db
+    .from('products')
+    .update({ stock: value, updated_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) return { error: '更新失败：' + error.message }
+  revalidatePath('/admin/products')
+  revalidatePath('/')
+  return { success: true, stock: value }
 }
 
 // 新闻：新增或编辑（可带图片）

@@ -10,9 +10,10 @@ import {
 } from '@/lib/currency'
 import { orderStatusLabel } from '@/lib/format'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
-import { cleanupExpiredOrders } from '@/lib/order-utils'
+import { cleanupExpiredOrders, autoConfirmReceipts } from '@/lib/order-utils'
 import { buildMetadata } from '@/lib/seo'
 import CancelOrderButton from '@/components/cancel-order-button'
+import ConfirmReceiptButton from '@/components/confirm-receipt-button'
 import type { Order } from '@/lib/types'
 
 // SEO
@@ -30,6 +31,8 @@ export default async function OrdersPage() {
 
   // 清理超过 24 小时未付款的待支付订单
   await cleanupExpiredOrders()
+  // 发货超过 14 天未确认收货的订单自动确认
+  await autoConfirmReceipts()
 
   // 实时汇率
   const rates = await getRates()
@@ -101,6 +104,15 @@ export default async function OrdersPage() {
               <div style={{ marginTop: 10 }}>
                 <CancelOrderButton orderId={order.id} />
               </div>
+            ) : null}
+            {/* 已发货：确认收货 + 14 天自动确认说明 */}
+            {order.status === 'shipped' ? (
+              <>
+                <ConfirmReceiptButton orderId={order.id} />
+                <p className="muted">
+                  {tr(dict, 'receiptAutoNote')}
+                </p>
+              </>
             ) : null}
           </div>
         ))

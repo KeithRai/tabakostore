@@ -1333,6 +1333,23 @@ textarea.input {
   padding: 4px 8px;
   font-weight: 700;
 }
+/* 库存编辑区：－ [件数] ＋ [确定] */
+.stock-editor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.stock-input {
+  width: 68px;
+  padding: 5px 8px;
+  text-align: center;
+}
+
+/* 后台导航右侧的语言切换 */
+.admin-lang {
+  margin-left: auto;
+  padding-left: 12px;
+}
 
 /* 费用明细 */
 .fee-list {

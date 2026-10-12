@@ -1,7 +1,7 @@
 import AdminNav from '@/components/admin-nav'
 import { requireAdmin } from '@/lib/admin-auth'
 import { createServiceClient } from '@/lib/supabase-service'
-import { cleanupExpiredOrders } from '@/lib/order-utils'
+import { cleanupExpiredOrders, autoConfirmReceipts } from '@/lib/order-utils'
 import OrdersClient from './orders-client'
 import type { Order } from '@/lib/types'
 
@@ -9,6 +9,8 @@ export default async function AdminOrdersPage() {
   await requireAdmin()
   // 清理超过 24 小时未付款的待支付订单
   await cleanupExpiredOrders()
+  // 发货超过 14 天未确认收货的订单自动确认
+  await autoConfirmReceipts()
   const db = createServiceClient()
   const { data } = await db
     .from('orders')

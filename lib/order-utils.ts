@@ -29,6 +29,22 @@ export async function restoreOrderStock(
   }
 }
 
+// 自动确认收货：发货超过 14 天未确认的订单自动变为"已收货"
+// 由页面加载时调用，返回自动确认的数量
+export async function autoConfirmReceipts(): Promise<number> {
+  const db = createServiceClient()
+  const cutoff = new Date(
+    Date.now() - 14 * 24 * 3600 * 1000
+  ).toISOString()
+  const { data } = await db
+    .from('orders')
+    .update({ status: 'delivered' })
+    .eq('status', 'shipped')
+    .lt('shipped_at', cutoff)
+    .select('id')
+  return (data ?? []).length
+}
+
 // 清理过期待支付订单（超过 24 小时未付款自动取消并恢复库存）
 // 由页面加载时调用，返回取消的订单数量
 export async function cleanupExpiredOrders(): Promise<number> {

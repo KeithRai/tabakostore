@@ -3,9 +3,11 @@
 import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { adminLogin } from '../actions'
+import { useLang } from '@/components/lang-provider'
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const { t } = useLang()
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -26,9 +28,9 @@ export default function AdminLoginPage() {
 
   return (
     <form className="form" onSubmit={onSubmit}>
-      <h1>管理后台登录</h1>
+      <h1>{t('admLogin')}</h1>
       <div className="field">
-        <label className="label">管理密码</label>
+        <label className="label">{t('admPassword')}</label>
         <input
           className="input"
           type="password"
@@ -39,7 +41,7 @@ export default function AdminLoginPage() {
       </div>
       {error ? <div className="alert">{error}</div> : null}
       <button className="btn btn-primary" type="submit" disabled={busy}>
-        {busy ? '登录中…' : '登录'}
+        {busy ? t('admLoggingIn') : t('admLoginBtn')}
       </button>
     </form>
   )

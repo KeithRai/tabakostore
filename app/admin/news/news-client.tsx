@@ -60,19 +60,19 @@ export default function NewsClient({ news }: { news: News[] }) {
     if (res?.error) {
       setMsg('❌ ' + res.error)
     } else {
-      setMsg('✅ 保存成功')
+      setMsg('✅ ' + t('admSaved'))
       resetForm()
       router.refresh()
     }
   }
 
   async function onDelete(id: string) {
-    if (!confirm('确定删除这条新闻吗？')) return
+    if (!confirm(t('admDeleteNewsConfirm'))) return
     const res = await deleteNews(id)
     if (res?.error) {
       setMsg('❌ ' + res.error)
     } else {
-      setMsg('✅ 已删除')
+      setMsg('✅ ' + t('admDeletedMsg'))
       router.refresh()
     }
   }
@@ -80,7 +80,7 @@ export default function NewsClient({ news }: { news: News[] }) {
   return (
     <div>
       <div className="admin-bar">
-        <h1>新闻管理</h1>
+        <h1>{t('admNewsMgmt')}</h1>
         <button
           type="button"
           className="btn btn-outline btn-sm"
@@ -89,16 +89,16 @@ export default function NewsClient({ news }: { news: News[] }) {
             window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
         >
-          ＋ 添加新闻
+          ＋ {t('admAddNews')}
         </button>
       </div>
 
       <form className="admin-panel" onSubmit={onSubmit}>
         <h2 style={{ marginTop: 0 }}>
-          {editingId ? '编辑新闻' : '添加新闻'}
+          {editingId ? t('admEditNews') : t('admAddNews')}
         </h2>
         <div className="field">
-          <label className="label">标题 *</label>
+          <label className="label">{t('admTitle')} *</label>
           <input
             className="input"
             value={title}
@@ -107,7 +107,7 @@ export default function NewsClient({ news }: { news: News[] }) {
           />
         </div>
         <div className="field">
-          <label className="label">{t('newsImage')}</label>
+          <label className="label">{t('admNewsImage')}</label>
           <div className="avatar-upload">
             {preview ? (
               <img className="avatar-preview" src={preview} alt="" />
@@ -144,7 +144,7 @@ export default function NewsClient({ news }: { news: News[] }) {
           </div>
         </div>
         <div className="field">
-          <label className="label">内容</label>
+          <label className="label">{t('admInstructionsBody')}</label>
           <textarea
             className="input"
             rows={5}
@@ -155,22 +155,22 @@ export default function NewsClient({ news }: { news: News[] }) {
         {msg ? <p className="muted">{msg}</p> : null}
         <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
           <button className="btn btn-primary" type="submit">
-            保存
+            {t('save')}
           </button>
           <button
             className="btn btn-outline"
             type="button"
             onClick={resetForm}
           >
-            取消
+            {t('cancel')}
           </button>
         </div>
       </form>
 
-      <h2>现有新闻（{news.length}）</h2>
+      <h2>{t('newsTitle')}（{news.length}）</h2>
       {news.length === 0 ? (
         <div className="empty">
-          <p>还没有新闻。</p>
+          <p>{t('newsComingSoon')}</p>
         </div>
       ) : (
         news.map((n) => (
@@ -189,13 +189,13 @@ export default function NewsClient({ news }: { news: News[] }) {
                 className="btn btn-outline btn-sm"
                 onClick={() => startEdit(n)}
               >
-                编辑
+                {t('edit')}
               </button>
               <button
                 className="btn btn-danger btn-sm"
                 onClick={() => onDelete(n.id)}
               >
-                删除
+                {t('delete')}
               </button>
             </div>
           </div>

@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
+import { getReceiptBadgeCount } from '@/app/orders/actions'
 import { useCart } from './cart-provider'
 import { useLang } from './lang-provider'
 import LanguageSwitcher from './language-switcher'
@@ -12,9 +13,20 @@ import NavMenu from './nav-menu'
 
 // 打开 Tidio 客服聊天窗口
 export function openChat() {
-  const w = window as unknown as { tidioChatApi?: { open?: () => void } }
+  const w = window as unknown as {
+    tidioChatApi?: { open?: () => void }
+    Tidio?: (cmd: string, ...args: unknown[]) => unknown
+  }
+  // 通知页面：客服窗口已打开（清零未读角标）
+  window.dispatchEvent(new Event('tidio:opened'))
   if (typeof w.tidioChatApi?.open === 'function') {
     w.tidioChatApi.open()
+  } else if (typeof w.Tidio === 'function') {
+    try {
+      w.Tidio('show')
+    } catch {
+      alert('Customer service chat is still loading, please try again in a moment.')
+    }
   } else {
     alert('Customer service chat is still loading, please try again in a moment.')
   }
@@ -28,9 +40,27 @@ type NavUser = {
 export default function Navbar() {
   const [user, setUser] = useState<NavUser | null>(null)
   const [loading, setLoading] = useState(true)
+  // 待确认收货的订单数量（导航栏订单图标角标）
+  const [receiptCount, setReceiptCount] = useState(0)
+  // 客服未读消息数量
+  const [chatUnread, setChatUnread] = useState(0)
   const router = useRouter()
   const { count } = useCart()
   const { t } = useLang()
+
+  // 待收货数量：登录后读取
+  const loadReceiptCount = useCallback(async (loggedIn: boolean) => {
+    if (!loggedIn) {
+      setReceiptCount(0)
+      return
+    }
+    try {
+      const n = await getReceiptBadgeCount()
+      setReceiptCount(n)
+    } catch {
+      setReceiptCount(0)
+    }
+  }, [])
 
   useEffect(() => {
     const supabase = createClient()
@@ -38,6 +68,7 @@ export default function Navbar() {
       const u = data.session?.user
       setUser(u ? (u as unknown as NavUser) : null)
       setLoading(false)
+      loadReceiptCount(!!u)
     })
     const {
       data: { subscription },
@@ -45,8 +76,40 @@ export default function Navbar() {
       const u = session?.user
       setUser(u ? (u as unknown as NavUser) : null)
       setLoading(false)
+      loadReceiptCount(!!u)
     })
     return () => subscription.unsubscribe()
+  }, [loadReceiptCount])
+
+  // 客服未读消息：尝试监听 Tidio 提供的未读事件
+  useEffect(() => {
+    const w = window as unknown as {
+      Tidio?: (cmd: string, ...args: unknown[]) => unknown
+    }
+    if (typeof w.Tidio !== 'function') return
+
+    // 打开聊天窗口时清零
+    const onOpen = () => setChatUnread(0)
+    window.addEventListener('tidio:opened', onOpen)
+
+    try {
+      // 不同版本事件名不同，逐个尝试，失败则忽略
+      const setUnread = (value: unknown) => {
+        const n = Number(value)
+        if (!isNaN(n) && n >= 0) setChatUnread(n)
+      }
+      w.Tidio('on', 'unreadMessagesChanged', setUnread)
+      w.Tidio('on', 'unreadMessagesCountChanged', setUnread)
+      w.Tidio('on', 'messageReceived', () =>
+        setChatUnread((n) => n + 1)
+      )
+    } catch {
+      // Tidio 不支持这些事件：不显示角标（不影响聊天功能）
+    }
+
+    return () => {
+      window.removeEventListener('tidio:opened', onOpen)
+    }
   }, [])
 
   const logout = async () => {
@@ -114,10 +177,44 @@ export default function Navbar() {
           </svg>
           {count > 0 ? <span className="cart-badge">{count}</span> : null}
         </Link>
-        {/* 联系客服：仅图标 */}
+        {/* 我的订单图标（含"待确认收货"数量角标，在购物车和客服之间） */}
+        <Link
+          href="/orders"
+          className="cart-btn"
+          aria-label={t('myOrders')}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect
+              width="8"
+              height="4"
+              x="8"
+              y="2"
+              rx="1"
+              ry="1"
+            />
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+            <path d="M12 11h4" />
+            <path d="M12 16h4" />
+            <path d="M8 11h.01" />
+            <path d="M8 16h.01" />
+          </svg>
+          {receiptCount > 0 ? (
+            <span className="cart-badge">{receiptCount}</span>
+          ) : null}
+        </Link>
+        {/* 联系客服：仅图标（含未读消息角标） */}
         <button
           type="button"
-          className="icon-btn"
+          className="cart-btn"
           onClick={openChat}
           aria-label={t('contactUs')}
         >
@@ -133,6 +230,9 @@ export default function Navbar() {
           >
             <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
           </svg>
+          {chatUnread > 0 ? (
+            <span className="cart-badge">{chatUnread}</span>
+          ) : null}
         </button>
         {/* 用户头像（在 menu 和 language 之间） */}
         <Link

@@ -9,6 +9,8 @@ import { orderStatusLabel } from '@/lib/format'
 import { getDictionary, tr, LANG_LIST, type Lang } from '@/lib/i18n'
 import { buildMetadata } from '@/lib/seo'
 import CancelOrderButton from '@/components/cancel-order-button'
+import ConfirmReceiptButton from '@/components/confirm-receipt-button'
+import { autoConfirmReceipts } from '@/lib/order-utils'
 import type { Order } from '@/lib/types'
 
 // SEO
@@ -36,6 +38,9 @@ export default async function OrderDetailPage({
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) redirect('/login?next=/orders/' + id)
+
+  // 发货超过 14 天未确认收货的订单自动确认
+  await autoConfirmReceipts()
 
   // 订单 + 商品明细（仅限本人的订单）
   const db = createServiceClient()
@@ -119,6 +124,13 @@ export default async function OrderDetailPage({
           <div style={{ marginTop: 10 }}>
             <CancelOrderButton orderId={order.id} />
           </div>
+        ) : null}
+        {/* 已发货：确认收货 + 14 天自动确认说明 */}
+        {order.status === 'shipped' ? (
+          <>
+            <ConfirmReceiptButton orderId={order.id} />
+            <p className="muted">{tr(dict, 'receiptAutoNote')}</p>
+          </>
         ) : null}
       </div>
     </div>

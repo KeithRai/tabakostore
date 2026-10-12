@@ -3,7 +3,8 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateOrderStatus } from '../actions'
-import { ORDER_STATUS_ZH } from '@/lib/format'
+import { orderStatusLabel } from '@/lib/format'
+import { useLang } from '@/components/lang-provider'
 import { useCurrency } from '@/components/currency-provider'
 import type { Order } from '@/lib/types'
 
@@ -21,10 +22,11 @@ function dateKey(createdAt: string): string {
 // 订单管理：按状态和日期筛选、修改订单状态
 export default function OrdersClient({ orders }: { orders: Order[] }) {
   const router = useRouter()
+  const { lang, t } = useLang()
   const { cny, jpy } = useCurrency()
   // 状态筛选（全部 / 待支付 / 待发货）
   const [filter, setFilter] = useState<Filter>('all')
-  // 选中的日期（null = 全部日期）
+  // 选中的日期（空 = 全部日期）
   const [selectedDate, setSelectedDate] = useState<string>('')
   const [msg, setMsg] = useState('')
 
@@ -67,11 +69,11 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
     }
     // 标记为已支付时提示已进入待发货列表
     if (status === 'paid') {
-      setMsg(`✅ 订单 ${orderNo} 已移入"待发货"列表`)
+      setMsg(t('admMovedToShip', { no: orderNo }))
     } else if (status === 'pending') {
-      setMsg(`✅ 订单 ${orderNo} 已移回"待支付"列表`)
+      setMsg(t('admMovedToPending', { no: orderNo }))
     } else {
-      setMsg(`✅ 订单 ${orderNo} 状态已更新`)
+      setMsg(t('admStatusUpdated', { no: orderNo }))
     }
     router.refresh()
   }
@@ -80,12 +82,8 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
 
   return (
     <div>
-      <h1>订单管理</h1>
-      <p className="muted">
-        用户下单后订单会出现在这里，状态为"待支付"。用户在客服聊天中完成
-        微信/支付宝付款后，请把状态改为"已支付"，订单会进入"待发货"列表，
-        然后安排发货。
-      </p>
+      <h1>{t('admOrderMgmt')}</h1>
+      <p className="muted">{t('admOrderDesc')}</p>
 
       {/* 筛选栏：状态按钮 + 日期下拉 */}
       <div className="filter-bar">
@@ -94,14 +92,14 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
           className={`btn btn-sm filter-btn ${filter === 'all' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setFilter('all')}
         >
-          全部（{orders.length}）
+          {t('admAll')}（{orders.length}）
         </button>
         <button
           type="button"
           className={`btn btn-sm filter-btn ${filter === 'pending' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setFilter('pending')}
         >
-          待支付
+          {t('admPendingPay')}
           {pendingCount > 0 ? (
             <span className="filter-badge">{pendingCount}</span>
           ) : null}
@@ -111,7 +109,7 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
           className={`btn btn-sm filter-btn ${filter === 'paid' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setFilter('paid')}
         >
-          待发货
+          {t('admToShip')}
           {paidCount > 0 ? (
             <span className="filter-badge">{paidCount}</span>
           ) : null}
@@ -123,7 +121,7 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
         >
-          <option value="">全部日期</option>
+          <option value="">{t('admAllDates')}</option>
           {dateOptions.map((d) => (
             <option key={d.date} value={d.date}>
               {d.date}（{d.count}）
@@ -140,7 +138,7 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
               setSelectedDate('')
             }}
           >
-            清除筛选
+            {t('admClearFilter')}
           </button>
         ) : null}
       </div>
@@ -149,7 +147,7 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
 
       {shownOrders.length === 0 ? (
         <div className="empty">
-          <p>没有符合条件的订单</p>
+          <p>{t('admNoMatchOrders')}</p>
         </div>
       ) : (
         shownOrders.map((order) => (
@@ -162,16 +160,17 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
                 </div>
               </div>
               <span className={`status-pill ${order.status}`}>
-                {ORDER_STATUS_ZH[order.status] ?? order.status}
+                {orderStatusLabel(order.status, lang)}
               </span>
             </div>
             <div className="muted">
-              客户：{order.full_name} · {order.email} · {order.country}
+              {t('admCustomer')}: {order.full_name} · {order.email} ·{' '}
+              {order.country}
             </div>
             <div className="muted">
-              地址：{order.city ? `${order.city}, ` : ''}
+              {t('admAddress')}: {order.city ? `${order.city}, ` : ''}
               {order.address}
-              {order.phone ? ` · 电话：${order.phone}` : ''}
+              {order.phone ? ` · ${order.phone}` : ''}
             </div>
             <div className="order-items">
               {order.order_items.map((item) => (
@@ -183,7 +182,7 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
               ))}
             </div>
             <div className="cart-total">
-              <span>订单金额：</span>
+              <span>{t('admOrderAmount')}:</span>
               <strong>
                 {cny(parseFloat(order.total))} /{' '}
                 {jpy(parseFloat(order.total))}
@@ -198,11 +197,11 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
               >
                 {STATUSES.map((s) => (
                   <option key={s} value={s}>
-                    {ORDER_STATUS_ZH[s]}
+                    {orderStatusLabel(s, lang)}
                   </option>
                 ))}
               </select>
-              <span className="muted">（选择后自动保存）</span>
+              <span className="muted">{t('admAutoSaveStatus')}</span>
             </div>
           </div>
         ))

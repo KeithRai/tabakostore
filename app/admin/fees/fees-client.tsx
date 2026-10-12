@@ -3,11 +3,13 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { getFees, saveFees } from '../actions'
 import { DEFAULT_FEES } from '@/lib/constants'
+import { useLang } from '@/components/lang-provider'
 import type { FeeSettings } from '@/lib/types'
 
 // 费用设置：服务费 / 包装费 / 国际结算手续费
 // 运费不固定：下单后由客服确认实际运费
 export default function FeesClient() {
+  const { t } = useLang()
   const [fees, setFees] = useState<FeeSettings>(DEFAULT_FEES)
   const [feeRate, setFeeRate] = useState('10')
   const [feePacking, setFeePacking] = useState('300')
@@ -49,7 +51,7 @@ export default function FeesClient() {
     if (res?.error) {
       setMsg('❌ ' + res.error)
     } else {
-      setMsg('✅ 保存成功')
+      setMsg('✅ ' + t('admSaved'))
       const f = await getFees()
       setFees(f)
     }
@@ -57,13 +59,11 @@ export default function FeesClient() {
 
   return (
     <div>
-      <h1>费用设置</h1>
-      <p className="muted">
-        设置购物车和结算时收取的费用，保存后立即生效。
-      </p>
+      <h1>{t('admFees')}</h1>
+      <p className="muted">{t('admFeeDesc')}</p>
       <form className="form" onSubmit={onSubmit}>
         <div className="field">
-          <label className="label">服务费（%）</label>
+          <label className="label">{t('admServiceFee')}</label>
           <input
             className="input"
             type="number"
@@ -73,10 +73,10 @@ export default function FeesClient() {
             value={feeRate}
             onChange={(e) => setFeeRate(e.target.value)}
           />
-          <p className="muted">按商品合计的百分比收取</p>
+          <p className="muted">{t('admPercentOfGoods')}</p>
         </div>
         <div className="field">
-          <label className="label">包装费（日元）</label>
+          <label className="label">{t('admPackingFee')}</label>
           <input
             className="input"
             type="number"
@@ -87,9 +87,7 @@ export default function FeesClient() {
           />
         </div>
         <div className="field">
-          <label className="label">
-            国际结算手续费（%）
-          </label>
+          <label className="label">{t('admSettlementFee')}</label>
           <input
             className="input"
             type="number"
@@ -99,13 +97,11 @@ export default function FeesClient() {
             value={feeSettlement}
             onChange={(e) => setFeeSettlement(e.target.value)}
           />
-          <p className="muted">按商品合计的百分比收取</p>
+          <p className="muted">{t('admPercentOfGoods')}</p>
         </div>
         <div className="field">
-          <label className="label">运费</label>
-          <p className="muted">
-            运费不固定：下单后由客服确认实际运费，付款时一并收取。
-          </p>
+          <label className="label">Shipping</label>
+          <p className="muted">{t('admShippingNote')}</p>
         </div>
         {msg ? <p className="muted">{msg}</p> : null}
         <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
@@ -114,14 +110,14 @@ export default function FeesClient() {
             type="submit"
             disabled={busy}
           >
-            {busy ? '保存中…' : '保存'}
+            {busy ? t('admSaving') : t('save')}
           </button>
           <button
             className="btn btn-outline"
             type="button"
             onClick={reset}
           >
-            取消
+            {t('cancel')}
           </button>
         </div>
       </form>
