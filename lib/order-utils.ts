@@ -1,6 +1,34 @@
 import { createServiceClient } from './supabase-service'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
+// 原子扣减库存（并发安全）
+// 成功返回剩余库存；库存不足返回 -1
+export async function decrementStock(
+  db: SupabaseClient,
+  productId: string,
+  qty: number
+): Promise<number> {
+  const { data, error } = await db.rpc('decrement_stock', {
+    p_product_id: productId,
+    p_qty: qty,
+  })
+  if (error) return -1
+  const n = Number(data)
+  return isNaN(n) ? -1 : n
+}
+
+// 原子增加库存（取消订单 / 下单失败回滚）
+export async function incrementStock(
+  db: SupabaseClient,
+  productId: string,
+  qty: number
+): Promise<void> {
+  await db.rpc('increment_stock', {
+    p_product_id: productId,
+    p_qty: qty,
+  })
+}
+
 // 恢复订单库存（取消订单时调用）
 export async function restoreOrderStock(
   db: SupabaseClient,
@@ -12,20 +40,7 @@ export async function restoreOrderStock(
     .eq('order_id', orderId)
   for (const item of items ?? []) {
     if (!item.product_id) continue
-    const { data: prod } = await db
-      .from('products')
-      .select('stock')
-      .eq('id', item.product_id)
-      .single()
-    if (prod) {
-      await db
-        .from('products')
-        .update({
-          stock: prod.stock + item.quantity,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', item.product_id)
-    }
+    await incrementStock(db, item.product_id, item.quantity)
   }
 }
 
