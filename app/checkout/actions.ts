@@ -88,7 +88,11 @@ export async function createOrder(
   // 流程：先扣库存 → 再创建订单；任何一步失败都会回滚已扣的库存
   const deducted: Array<{ product_id: string; quantity: number }> = []
   for (const item of lineItems) {
-    const left = await decrementStock(db, item.product_id, item.qty)
+    const left = await decrementStock(
+      db,
+      item.product_id,
+      item.quantity
+    )
     if (left < 0) {
       // 库存不足（已被其他客户抢先购买）：回滚本次已扣减的库存
       for (const d of deducted) {
@@ -100,7 +104,7 @@ export async function createOrder(
     }
     deducted.push({
       product_id: item.product_id,
-      quantity: item.qty,
+      quantity: item.quantity,
     })
   }
 
