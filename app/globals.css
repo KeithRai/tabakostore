@@ -769,6 +769,15 @@ textarea.input {
 .lang-toggle:hover {
   border-color: var(--primary);
 }
+/* 地球图标按钮（只显示图标） */
+.lang-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  width: 34px;
+  height: 34px;
+}
 .lang-menu {
   position: absolute;
   top: calc(100% + 6px);
