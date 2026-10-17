@@ -11,6 +11,8 @@ import { MAX_ORDER, MAX_PER_ITEM } from '@/lib/constants'
 import AddToCartButton from '@/components/add-to-cart-button'
 import ProductGallery from '@/components/product-gallery'
 import ReviewSection from '@/components/review-section'
+import HistoryTracker from '@/components/history-tracker'
+import WishlistButton from '@/components/wishlist-button'
 import { buildMetadata } from '@/lib/seo'
 import { getReviews } from './actions'
 import type { Product } from '@/lib/types'
@@ -66,6 +68,13 @@ export default async function ProductPage({
 
   return (
     <>
+      {/* 记录浏览历史 */}
+      <HistoryTracker
+        id={product.id}
+        name={product.name}
+        price={parseFloat(product.price)}
+        imageUrl={images[0] ?? null}
+      />
       <div className="two-col">
       <div>
         <ProductGallery images={images} name={product.name} />
@@ -98,6 +107,17 @@ export default async function ProductPage({
         {product.description ? (
           <p style={{ marginTop: 12 }}>{product.description}</p>
         ) : null}
+        {/* 收藏按钮 */}
+        <div style={{ marginTop: 12 }}>
+          <WishlistButton
+            item={{
+              id: product.id,
+              name: product.name,
+              price: parseFloat(product.price),
+              image_url: images[0] ?? null,
+            }}
+          />
+        </div>
       </div>
       </div>
 

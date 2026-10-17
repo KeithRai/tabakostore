@@ -6,7 +6,9 @@ import './globals.css'
 import { CartProvider } from '@/components/cart-provider'
 import { LangProvider } from '@/components/lang-provider'
 import { CurrencyProvider } from '@/components/currency-provider'
+import { WishlistProvider } from '@/components/wishlist-provider'
 import Navbar from '@/components/navbar'
+import BottomNav from '@/components/bottom-nav'
 import AgeGate from '@/components/age-gate'
 import BackToTop from '@/components/back-to-top'
 import {
@@ -52,6 +54,7 @@ export default async function RootLayout({
         <LangProvider lang={lang}>
           <CartProvider>
             <CurrencyProvider>
+              <WishlistProvider>
               <Navbar />
               <main className="container">{children}</main>
               <footer className="footer">
@@ -66,8 +69,10 @@ export default async function RootLayout({
                 </div>
                 <div>© {new Date().getFullYear()} TabakoStore</div>
               </footer>
+              <BottomNav />
               <AgeGate />
               <BackToTop />
+              </WishlistProvider>
             </CurrencyProvider>
           </CartProvider>
         </LangProvider>

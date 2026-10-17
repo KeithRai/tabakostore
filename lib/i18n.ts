@@ -341,6 +341,48 @@ const en = {
   admDeleteProductConfirm: 'Delete this product?',
   admDeleteNewsConfirm: 'Delete this news item?',
   admDeleteInstructionsConfirm: 'Delete the displayed help content?',
+  // 后台数据看板
+  admDashboard: 'Dashboard',
+  admTodaySales: "Today's sales",
+  admTodayOrders: "Today's orders",
+  admTotalSales: 'Total sales',
+  admTotalOrders: 'Total orders',
+  admAvgOrder: 'Average order',
+  admLast7Days: 'Sales (last 7 days)',
+  admTopProducts: 'Best sellers',
+  admRecentOrders: 'Recent orders',
+  admPendingActions: 'Pending actions',
+  admNoSalesYet: 'No sales yet.',
+  admToShipCount: 'to ship',
+  admPendingPayCount: 'awaiting payment',
+  admLowStock: 'Low stock',
+  admProductsCount: 'products',
+  admNoLowStock: 'All products have sufficient stock.',
+  // 首页
+  bannerTitle: 'Fun toys, delivered worldwide',
+  bannerSub:
+    'Curated toys shipped to your door. Pay by WeChat Pay / Alipay.',
+  bannerHot: 'Shop best sellers',
+  bannerNew: 'New arrivals',
+  newArrivals: 'New arrivals',
+  bestSellers: 'Best sellers',
+  recentlyViewed: 'Recently viewed',
+  // 收藏 / 历史
+  wishlist: 'Wishlist',
+  addToWishlist: 'Add to wishlist',
+  removeFromWishlist: 'Remove from wishlist',
+  wishlistEmpty: 'Your wishlist is empty.',
+  wishlistEmptyHint: 'Click the heart icon on any product to save it here.',
+  noHistory: 'No browsing history yet.',
+  // 规格选项
+  specs: 'Options',
+  selectSpec: 'Please select',
+  // 404 / 加载
+  notFoundTitle: 'Page not found',
+  notFoundSub:
+    'The page you are looking for does not exist or has been moved.',
+  backHome: 'Back to home',
+  loading: 'Loading...',
 }
 
 export type Dict = typeof en
@@ -638,6 +680,46 @@ const zh: Dict = {
   admDeleteProductConfirm: '确定删除这个商品吗？',
   admDeleteNewsConfirm: '确定删除这条新闻吗？',
   admDeleteInstructionsConfirm: '确定删除当前展示的帮助信息吗？',
+  // 后台数据看板
+  admDashboard: '数据看板',
+  admTodaySales: '今日销售额',
+  admTodayOrders: '今日订单数',
+  admTotalSales: '累计销售额',
+  admTotalOrders: '累计订单',
+  admAvgOrder: '平均客单价',
+  admLast7Days: '近 7 天销售额',
+  admTopProducts: '热销商品',
+  admRecentOrders: '最新订单',
+  admPendingActions: '待处理',
+  admNoSalesYet: '暂无销售数据。',
+  admToShipCount: '待发货',
+  admPendingPayCount: '待支付',
+  admLowStock: '库存预警',
+  admProductsCount: '件商品',
+  admNoLowStock: '所有商品库存充足。',
+  // 首页
+  bannerTitle: '好玩玩具，运往全球',
+  bannerSub: '精选玩具直送你家，支持微信支付 / 支付宝。',
+  bannerHot: '看看热销',
+  bannerNew: '看看新品',
+  newArrivals: '新品上架',
+  bestSellers: '热销排行',
+  recentlyViewed: '最近浏览',
+  // 收藏 / 历史
+  wishlist: '收藏夹',
+  addToWishlist: '加入收藏',
+  removeFromWishlist: '取消收藏',
+  wishlistEmpty: '收藏夹还是空的。',
+  wishlistEmptyHint: '点击商品上的爱心图标即可收藏。',
+  noHistory: '暂无浏览记录。',
+  // 规格选项
+  specs: '规格选项',
+  selectSpec: '请选择',
+  // 404 / 加载
+  notFoundTitle: '页面不存在',
+  notFoundSub: '你要找的页面不存在或已被移动。',
+  backHome: '返回首页',
+  loading: '加载中...',
 }
 
 const zhTW: Dict = {
@@ -933,6 +1015,46 @@ const zhTW: Dict = {
   admDeleteProductConfirm: '確定刪除這個商品嗎？',
   admDeleteNewsConfirm: '確定刪除這條新聞嗎？',
   admDeleteInstructionsConfirm: '確定刪除目前展示的幫助資訊嗎？',
+  // 後台數據看板
+  admDashboard: '數據看板',
+  admTodaySales: '今日銷售額',
+  admTodayOrders: '今日訂單數',
+  admTotalSales: '累計銷售額',
+  admTotalOrders: '累計訂單',
+  admAvgOrder: '平均客單價',
+  admLast7Days: '近 7 天銷售額',
+  admTopProducts: '熱銷商品',
+  admRecentOrders: '最新訂單',
+  admPendingActions: '待處理',
+  admNoSalesYet: '暫無銷售數據。',
+  admToShipCount: '待發貨',
+  admPendingPayCount: '待支付',
+  admLowStock: '庫存預警',
+  admProductsCount: '件商品',
+  admNoLowStock: '所有商品庫存充足。',
+  // 首頁
+  bannerTitle: '好玩玩具，運往全球',
+  bannerSub: '精選玩具直送你家，支援微信支付 / 支付寶。',
+  bannerHot: '看看熱銷',
+  bannerNew: '看看新品',
+  newArrivals: '新品上架',
+  bestSellers: '熱銷排行',
+  recentlyViewed: '最近瀏覽',
+  // 收藏 / 歷史
+  wishlist: '收藏夾',
+  addToWishlist: '加入收藏',
+  removeFromWishlist: '取消收藏',
+  wishlistEmpty: '收藏夾還是空的。',
+  wishlistEmptyHint: '點擊商品上的愛心圖標即可收藏。',
+  noHistory: '暫無瀏覽記錄。',
+  // 規格選項
+  specs: '規格選項',
+  selectSpec: '請選擇',
+  // 404 / 載入
+  notFoundTitle: '頁面不存在',
+  notFoundSub: '你要找的頁面不存在或已被移動。',
+  backHome: '返回首頁',
+  loading: '載入中...',
 }
 
 const ja: Dict = {
@@ -1243,6 +1365,47 @@ const ja: Dict = {
   admDeleteProductConfirm: 'この商品を削除しますか？',
   admDeleteNewsConfirm: 'このニュースを削除しますか？',
   admDeleteInstructionsConfirm: '表示中のヘルプ内容を削除しますか？',
+  // 管理ダッシュボード
+  admDashboard: 'ダッシュボード',
+  admTodaySales: '本日の売上',
+  admTodayOrders: '本日の注文数',
+  admTotalSales: '累計売上',
+  admTotalOrders: '累計注文数',
+  admAvgOrder: '平均注文額',
+  admLast7Days: '直近7日間の売上',
+  admTopProducts: '人気商品',
+  admRecentOrders: '最新の注文',
+  admPendingActions: '対応待ち',
+  admNoSalesYet: '売上データはまだありません。',
+  admToShipCount: '発送待ち',
+  admPendingPayCount: '支払待ち',
+  admLowStock: '在庫アラート',
+  admProductsCount: '件',
+  admNoLowStock: 'すべての商品は在庫が十分です。',
+  // ホーム
+  bannerTitle: 'おもしろいおもちゃを世界へ',
+  bannerSub:
+    '厳選したおもちゃを世界中にお届け。WeChat支付・支付宝に対応。',
+  bannerHot: '人気商品を見る',
+  bannerNew: '新着商品を見る',
+  newArrivals: '新着商品',
+  bestSellers: '人気ランキング',
+  recentlyViewed: '閲覧履歴',
+  // お気に入り / 履歴
+  wishlist: 'お気に入り',
+  addToWishlist: 'お気に入りに追加',
+  removeFromWishlist: 'お気に入りから外す',
+  wishlistEmpty: 'お気に入りはまだ空です。',
+  wishlistEmptyHint: '商品のハートアイコンをタップすると保存できます。',
+  noHistory: '閲覧履歴はまだありません。',
+  // 仕様オプション
+  specs: '仕様',
+  selectSpec: '選択してください',
+  // 404 / 読み込み
+  notFoundTitle: 'ページが見つかりません',
+  notFoundSub: 'お探しのページは存在しないか、移動されました。',
+  backHome: 'ホームに戻る',
+  loading: '読み込み中...',
 }
 
 export function getDictionary(lang: Lang): Dict {

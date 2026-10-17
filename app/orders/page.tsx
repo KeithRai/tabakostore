@@ -84,8 +84,11 @@ export default async function OrdersPage() {
             <div className="order-items">
               {order.order_items.map((item) => (
                 <div key={item.id}>
-                  {item.product_name} × {item.quantity} —{' '}
-                  {formatCNY(parseFloat(item.price), rates)} /{' '}
+                  {item.product_name} × {item.quantity}
+                  {item.variant ? (
+                    <span className="muted"> （{item.variant}）</span>
+                  ) : null}{' '}
+                  — {formatCNY(parseFloat(item.price), rates)} /{' '}
                   {formatJPY(parseFloat(item.price), rates)}
                 </div>
               ))}

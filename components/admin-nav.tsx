@@ -9,6 +9,7 @@ export default function AdminNav({
   active,
 }: {
   active:
+    | 'dashboard'
     | 'products'
     | 'orders'
     | 'news'
@@ -18,10 +19,17 @@ export default function AdminNav({
   const { t } = useLang()
 
   const items: Array<{
-    key: 'products' | 'orders' | 'news' | 'fees' | 'instructions'
+    key:
+      | 'dashboard'
+      | 'products'
+      | 'orders'
+      | 'news'
+      | 'fees'
+      | 'instructions'
     href: string
     label: string
   }> = [
+    { key: 'dashboard', href: '/admin/dashboard', label: t('admDashboard') },
     { key: 'products', href: '/admin/products', label: t('admProductMgmt') },
     { key: 'orders', href: '/admin/orders', label: t('admOrderMgmt') },
     { key: 'news', href: '/admin/news', label: t('admNewsMgmt') },

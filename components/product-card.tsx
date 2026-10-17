@@ -6,6 +6,7 @@ import { useCart } from './cart-provider'
 import { useLang } from './lang-provider'
 import { useCurrentUser } from './use-current-user'
 import { useCurrency } from './currency-provider'
+import WishlistButton from './wishlist-button'
 import type { Product } from '@/lib/types'
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -39,6 +40,16 @@ export default function ProductCard({ product }: { product: Product }) {
         ) : (
           <div className="card-img card-img-empty">{t('noImage')}</div>
         )}
+        {/* 收藏按钮 */}
+        <WishlistButton
+          item={{
+            id: product.id,
+            name: product.name,
+            price,
+            image_url: cover,
+          }}
+          className="card-wish"
+        />
       </Link>
       <div className="card-body">
         <h3 className="card-title">

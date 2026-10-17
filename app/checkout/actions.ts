@@ -54,6 +54,7 @@ export async function createOrder(
     price: number
     quantity: number
     image_url: string | null
+    variant: string | null
   }> = []
 
   for (const item of items) {
@@ -79,6 +80,7 @@ export async function createOrder(
       price,
       quantity: item.qty,
       image_url: item.image_url ?? p.image_url,
+      variant: item.variant ?? null,
     })
   }
   total = Math.round(total * 100) / 100
@@ -157,6 +159,7 @@ export async function createOrder(
       price: li.price,
       quantity: li.quantity,
       image_url: li.image_url,
+      variant: li.variant,
     }))
   )
   if (itemsError) {

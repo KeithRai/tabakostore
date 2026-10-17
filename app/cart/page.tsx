@@ -91,6 +91,14 @@ export default function CartPage() {
                   ) : null}
                   <div>
                     <Link href={`/product/${item.id}`}>{item.name}</Link>
+                    {item.variant ? (
+                      <p
+                        className="muted"
+                        style={{ fontSize: 12, margin: '2px 0 0' }}
+                      >
+                        {item.variant}
+                      </p>
+                    ) : null}
                     {/* 库存提示：数量已达库存上限时显示 */}
                     {atStockLimit ? (
                       <p className="muted" style={{ fontSize: 12 }}>
@@ -107,7 +115,16 @@ export default function CartPage() {
               </td>
               <td>
                 <div className="qty">
-                  <button type="button" onClick={() => setQty(item.id, item.qty - 1)}>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setQty(
+                        item.id,
+                        item.qty - 1,
+                        item.variantKey ?? ''
+                      )
+                    }
+                  >
                     −
                   </button>
                   <span>{item.qty}</span>
@@ -115,7 +132,9 @@ export default function CartPage() {
                   <button
                     type="button"
                     disabled={atStockLimit}
-                    onClick={() => setQty(item.id, item.qty + 1)}
+                    onClick={() =>
+                      setQty(item.id, item.qty + 1, item.variantKey ?? '')
+                    }
                   >
                     ＋
                   </button>

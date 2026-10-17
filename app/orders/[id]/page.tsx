@@ -103,8 +103,11 @@ export default async function OrderDetailPage({
                 />
               ) : null}
               <span>
-                {item.product_name} × {item.quantity} —{' '}
-                {formatCNY(parseFloat(item.price), rates)} /{' '}
+                {item.product_name} × {item.quantity}
+                {item.variant ? (
+                  <span className="muted"> （{item.variant}）</span>
+                ) : null}{' '}
+                — {formatCNY(parseFloat(item.price), rates)} /{' '}
                 {formatJPY(parseFloat(item.price), rates)}
               </span>
             </div>

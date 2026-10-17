@@ -45,6 +45,29 @@ export async function upsertProduct(formData: FormData) {
   const category = String(formData.get('category') ?? '').trim()
   const existingImage = String(formData.get('image_url') ?? '').trim()
 
+  // 规格选项：[{ label, values: [] }]
+  const rawSpecs = String(formData.get('specs') ?? '')
+  let variants: Array<{ label: string; values: string[] }> = []
+  if (rawSpecs.trim()) {
+    try {
+      const parsed = JSON.parse(rawSpecs)
+      if (Array.isArray(parsed)) {
+        variants = parsed
+          .map((g) => ({
+            label: String(g?.label ?? '').trim(),
+            values: Array.isArray(g?.values)
+              ? g.values
+                  .map((v: unknown) => String(v).trim())
+                  .filter(Boolean)
+              : [],
+          }))
+          .filter((g) => g.label && g.values.length > 0)
+      }
+    } catch {
+      return { error: '规格格式错误，请检查后重试' }
+    }
+  }
+
   // 现有图片列表（JSON 数组）
   const existingImages: string[] = (() => {
     try {
@@ -108,6 +131,7 @@ export async function upsertProduct(formData: FormData) {
         category: category || null,
         image_url,
         image_urls: finalImages,
+        variants: variants.length > 0 ? variants : null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -121,6 +145,7 @@ export async function upsertProduct(formData: FormData) {
       category: category || null,
       image_url,
       image_urls: finalImages,
+      variants: variants.length > 0 ? variants : null,
     })
     if (error) return { error: '保存失败：' + error.message }
   }

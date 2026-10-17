@@ -37,6 +37,42 @@ export default function ProductsClient({
   const [files, setFiles] = useState<File[]>([])
   const [msg, setMsg] = useState('')
 
+  // 规格选项（颜色/尺寸）
+  const [specs, setSpecs] = useState<Array<{ label: string; values: string[] }>>([])
+  const [specText, setSpecText] = useState<Record<number, string>>({})
+
+  function loadSpecs(v: unknown) {
+    const arr = Array.isArray(v)
+      ? (v as Array<{ label?: unknown; values?: unknown }>)
+      : []
+    setSpecs(
+      arr.map((g) => ({
+        label: String(g.label ?? ''),
+        values: Array.isArray(g.values)
+          ? g.values.map((x) => String(x))
+          : [],
+      }))
+    )
+    setSpecText({})
+  }
+
+  function updateSpecValue(index: number, raw: string) {
+    setSpecText((prev) => ({ ...prev, [index]: raw }))
+  }
+
+  function commitSpecValues() {
+    setSpecs((prev) =>
+      prev.map((g, i) => ({
+        ...g,
+        values: (specText[i] ?? '')
+          .split(/[,，\s]+/)
+          .map((s) => s.trim())
+          .filter(Boolean),
+      }))
+    )
+    setSpecText({})
+  }
+
   function startEdit(p: Product) {
     setEditingId(p.id)
     setName(p.name)
@@ -48,6 +84,7 @@ export default function ProductsClient({
     setImageUrl(p.image_url ?? '')
     setExistingImages(p.image_urls ?? [])
     setFiles([])
+    loadSpecs(p.variants)
     // 点击编辑 → 进入商品调整页（表单视图）
     setView('form')
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -63,6 +100,8 @@ export default function ProductsClient({
     setImageUrl('')
     setExistingImages([])
     setFiles([])
+    setSpecs([])
+    setSpecText({})
   }
 
   async function onSubmit(e: FormEvent) {
@@ -76,6 +115,18 @@ export default function ProductsClient({
     fd.set('category', category)
     fd.set('image_url', imageUrl)
     fd.set('existing_images', JSON.stringify(existingImages))
+    // 提交前先把正在输入的规格值同步进去
+    const finalSpecs = specs.map((g, i) => ({
+      label: g.label,
+      values:
+        specText[i] !== undefined
+          ? specText[i]
+              .split(/[,，\s]+/)
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : g.values,
+    }))
+    fd.set('specs', JSON.stringify(finalSpecs))
     files.forEach((f) => fd.set('images', f))
     const res = await upsertProduct(fd)
     if (res?.error) {
@@ -230,9 +281,60 @@ export default function ProductsClient({
               onChange={(e) => setCategory(e.target.value)}
             />
           </div>
+          {/* 规格选项（颜色 / 尺寸） */}
           <div className="field">
-            <label className="label">{t('admProductImages')}</label>
-            <input
+            <label className="label">{t('specs')}</label>
+            {specs.map((g, i) => (
+              <div className="spec-row" key={i}>
+                <input
+                  className="input spec-label"
+                  value={g.label}
+                  placeholder="颜色 / Size"
+                  onChange={(e) =>
+                    setSpecs((prev) =>
+                      prev.map((x, j) =>
+                        j === i ? { ...x, label: e.target.value } : x
+                      )
+                    )
+                  }
+                />
+                <input
+                  className="input"
+                  value={
+                    specText[i] !== undefined
+                      ? specText[i]
+                      : g.values.join(', ')
+                  }
+                  placeholder="红, 蓝, M, L"
+                  onChange={(e) => updateSpecValue(i, e.target.value)}
+                  onBlur={commitSpecValues}
+                />
+                <button
+                  type="button"
+                  className="btn btn-danger btn-sm"
+                  onClick={() =>
+                    setSpecs((prev) => prev.filter((_, j) => j !== i))
+                  }
+                >
+                  {t('delete')}
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() =>
+                setSpecs((prev) => [...prev, { label: '', values: [] }])
+              }
+            >
+              ＋ {t('specs')}
+            </button>
+            <p className="muted">
+              例：颜色 = 红, 蓝；尺寸 = S, M, L（多个用逗号分隔）
+            </p>
+          </div>
+          <div className="field">
+            <label className="label">{t('admProductImages')}</label>            <input
               className="file-input"
               type="file"
               accept="image/*"

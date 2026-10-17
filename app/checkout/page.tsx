@@ -132,9 +132,12 @@ export default function CheckoutPage() {
       <h2>{t('orderSummary')}</h2>
       <ul className="summary">
         {items.map((i) => (
-          <li key={i.id}>
-            {i.name} × {i.qty} — {cny(i.price * i.qty)} /{' '}
-            {jpy(i.price * i.qty)}
+          <li key={`${i.id}-${i.variantKey ?? ''}`}>
+            {i.name} × {i.qty}
+            {i.variant ? (
+              <span className="muted"> （{i.variant}）</span>
+            ) : null}{' '}
+            — {cny(i.price * i.qty)} / {jpy(i.price * i.qty)}
           </li>
         ))}
       </ul>

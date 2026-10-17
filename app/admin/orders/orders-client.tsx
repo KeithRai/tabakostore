@@ -175,8 +175,11 @@ export default function OrdersClient({ orders }: { orders: Order[] }) {
             <div className="order-items">
               {order.order_items.map((item) => (
                 <div key={item.id}>
-                  {item.product_name} × {item.quantity} —{' '}
-                  {cny(parseFloat(item.price))} /{' '}
+                  {item.product_name} × {item.quantity}
+                  {item.variant ? (
+                    <span className="muted"> （{item.variant}）</span>
+                  ) : null}{' '}
+                  — {cny(parseFloat(item.price))} /{' '}
                   {jpy(parseFloat(item.price))}
                 </div>
               ))}

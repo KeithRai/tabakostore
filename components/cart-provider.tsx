@@ -16,7 +16,7 @@ type CartContextType = {
   items: CartItem[]
   add: (item: Omit<CartItem, 'qty'>, qty?: number) => void
   remove: (id: string) => void
-  setQty: (id: string, qty: number) => void
+  setQty: (id: string, qty: number, variantKey?: string) => void
   clear: () => void
   // 用最新库存同步购物车（数量超过库存时自动下调）
   updateStocks: (stocks: Record<string, number>) => void
@@ -48,7 +48,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // 加入购物车：数量不能超过库存、单件上限 20、整单合计上限 20
   const add = (item: Omit<CartItem, 'qty'>, qty = 1) => {
     const currentTotal = items.reduce((s, i) => s + i.qty, 0)
-    const found = items.find((i) => i.id === item.id)
+    // 同一商品不同规格分开计数
+    const key = item.variantKey ?? ''
+    const found = items.find(
+      (i) => i.id === item.id && (i.variantKey ?? '') === key
+    )
     const currentQty = found ? found.qty : 0
     const otherTotal = currentTotal - currentQty
 
@@ -91,10 +95,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     setItems((prev) => {
-      const exists = prev.find((i) => i.id === item.id)
+      const exists = prev.find(
+        (i) => i.id === item.id && (i.variantKey ?? '') === key
+      )
       if (exists) {
         return prev.map((i) =>
-          i.id === item.id
+          i.id === item.id && (i.variantKey ?? '') === key
             ? {
                 ...i,
                 qty: newQty,
@@ -111,9 +117,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => prev.filter((i) => i.id !== id))
 
   // 修改数量：受库存、单件 20、整单 20 共同约束
-  const setQty = (id: string, qty: number) => {
+  const setQty = (id: string, qty: number, variantKey = '') => {
     const currentTotal = items.reduce((s, i) => s + i.qty, 0)
-    const found = items.find((i) => i.id === id)
+    const found = items.find(
+      (i) => i.id === id && (i.variantKey ?? '') === variantKey
+    )
     if (!found) return
     const otherTotal = currentTotal - found.qty
     const stockCap =
@@ -125,7 +133,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       Math.min(qty, stockCap, MAX_PER_ITEM, MAX_ORDER - otherTotal)
     )
     setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, qty: capped } : i))
+      prev.map((i) =>
+        i.id === id && (i.variantKey ?? '') === variantKey
+          ? { ...i, qty: capped }
+          : i
+      )
     )
   }
 
