@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useLang } from './lang-provider'
 import { LANG_LIST, LANG_LABELS, type Lang } from '@/lib/i18n'
 
-// 语言切换下拉框：显示 Language，点开可选择 中/日/英
+// 语言切换：地球图标按钮，点开可选择 中文 / English / 繁體 / 日本語
 export default function LanguageSwitcher() {
   const { lang, setLang } = useLang()
   const [open, setOpen] = useState(false)
@@ -25,10 +25,26 @@ export default function LanguageSwitcher() {
     <div className="lang-dropdown" ref={ref}>
       <button
         type="button"
-        className="lang-toggle"
+        className="lang-toggle lang-toggle-icon"
         onClick={() => setOpen((v) => !v)}
+        aria-label={LANG_LABELS[lang]}
+        title={LANG_LABELS[lang]}
       >
-        Language ▾
+        {/* 地球图标 */}
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="2" y1="12" x2="22" y2="12" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
       </button>
       {open && (
         <div className="lang-menu">
